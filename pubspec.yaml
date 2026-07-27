@@ -39,7 +39,6 @@ dependencies:
   riverpod: ^2.6.1
   dio: ^5.10.0
   shared_preferences: ^2.3.3
-  google_fonts: ^6.3.0
 
 dev_dependencies:
   flutter_test:

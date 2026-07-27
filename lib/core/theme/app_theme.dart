@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
   static const Color primaryColor = Color(0xFF4F85F6); // Blue matching the web Sign in button
@@ -20,11 +19,11 @@ class AppTheme {
         background: backgroundColor,
         surface: cardColor,
       ),
-      textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme).copyWith(
-        displayLarge: GoogleFonts.inter(color: textPrimary, fontWeight: FontWeight.bold),
-        titleLarge: GoogleFonts.inter(color: textPrimary, fontWeight: FontWeight.w600),
-        bodyLarge: GoogleFonts.inter(color: textPrimary),
-        bodyMedium: GoogleFonts.inter(color: textSecondary),
+      textTheme: ThemeData.dark().textTheme.copyWith(
+        displayLarge: const TextStyle(color: textPrimary, fontWeight: FontWeight.bold),
+        titleLarge: const TextStyle(color: textPrimary, fontWeight: FontWeight.w600),
+        bodyLarge: const TextStyle(color: textPrimary),
+        bodyMedium: const TextStyle(color: textSecondary),
       ),
       appBarTheme: const AppBarTheme(
         backgroundColor: backgroundColor,
