@@ -41,6 +41,7 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.19.1"
+<<<<<<< HEAD
   crypto:
     dependency: transitive
     description:
@@ -49,6 +50,8 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.7"
+=======
+>>>>>>> 335ef71dfd49fefbf39c61ade6ac545f36d28515
   cupertino_icons:
     dependency: "direct main"
     description:
@@ -128,6 +131,7 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+<<<<<<< HEAD
   google_fonts:
     dependency: "direct main"
     description:
@@ -192,6 +196,8 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.6.0"
+=======
+>>>>>>> 335ef71dfd49fefbf39c61ade6ac545f36d28515
   http_parser:
     dependency: transitive
     description:
@@ -272,6 +278,7 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.9.1"
+<<<<<<< HEAD
   path_provider:
     dependency: transitive
     description:
@@ -296,6 +303,8 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.4.1"
+=======
+>>>>>>> 335ef71dfd49fefbf39c61ade6ac545f36d28515
   path_provider_linux:
     dependency: transitive
     description:
@@ -503,4 +512,8 @@ packages:
     version: "1.1.0"
 sdks:
   dart: ">=3.10.0-0 <4.0.0"
+<<<<<<< HEAD
   flutter: ">=3.35.0"
+=======
+  flutter: ">=3.22.0"
+>>>>>>> 335ef71dfd49fefbf39c61ade6ac545f36d28515

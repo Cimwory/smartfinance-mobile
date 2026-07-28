@@ -39,8 +39,11 @@ dependencies:
   riverpod: ^2.6.1
   dio: ^5.10.0
   shared_preferences: ^2.3.3
+<<<<<<< HEAD
   google_fonts: ^6.2.1
   google_sign_in: ^6.2.1
+=======
+>>>>>>> 335ef71dfd49fefbf39c61ade6ac545f36d28515
 
 dev_dependencies:
   flutter_test:
