@@ -169,7 +169,32 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ),
                   const SizedBox(height: 24),
                   OutlinedButton.icon(
-                    onPressed: () {},
+                    onPressed: authState.isLoading ? null : () async {
+                      final success = await ref.read(authProvider.notifier).loginWithGoogle();
+                      if (success) {
+                        if (context.mounted) {
+                          final user = ref.read(authProvider).user;
+                          if (user != null && user['role'] == 'admin') {
+                            Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(builder: (_) => const AdminDashboard()),
+                            );
+                          } else {
+                            Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(builder: (_) => const UserDashboard()),
+                            );
+                          }
+                        }
+                      } else {
+                        if (context.mounted) {
+                          final error = ref.read(authProvider).error;
+                          if (error != null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(error), backgroundColor: Colors.red),
+                            );
+                          }
+                        }
+                      }
+                    },
                     icon: Image.network(
                       'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/120px-Google_%22G%22_logo.svg.png',
                       height: 18,
@@ -207,6 +232,38 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  const Divider(color: Colors.white24),
+                  const SizedBox(height: 8),
+                  const Center(
+                    child: Text(
+                      'Development Shortcuts:',
+                      style: TextStyle(color: AppTheme.textSecondary, fontSize: 10, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      TextButton.icon(
+                        onPressed: () {
+                          Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(builder: (_) => const AdminDashboard()),
+                          );
+                        },
+                        icon: const Icon(Icons.admin_panel_settings, size: 16, color: Colors.blueAccent),
+                        label: const Text('Go to Admin', style: TextStyle(color: Colors.blueAccent, fontSize: 12)),
+                      ),
+                      TextButton.icon(
+                        onPressed: () {
+                          Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(builder: (_) => const UserDashboard()),
+                          );
+                        },
+                        icon: const Icon(Icons.person, size: 16, color: Colors.greenAccent),
+                        label: const Text('Go to User', style: TextStyle(color: Colors.greenAccent, fontSize: 12)),
                       ),
                     ],
                   ),
