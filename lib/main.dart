@@ -4,6 +4,7 @@ import 'core/theme/app_theme.dart';
 import 'features/auth/presentation/login_screen.dart';
 import 'features/auth/providers/auth_provider.dart';
 import 'features/dashboard/presentation/admin_dashboard.dart';
+import 'features/onboarding/presentation/landing_screen.dart';
 import 'features/dashboard/presentation/user_dashboard.dart';
 
 void main() {
@@ -30,11 +31,11 @@ class MyApp extends ConsumerWidget {
         home = const UserDashboard();
       }
     } else if (!authState.isLoading && !authState.isAuthenticated) {
-      home = const LoginScreen();
+      home = const LandingScreen();
     }
 
     return MaterialApp(
-      title: 'Smart Finance',
+      title: 'Nexio Mobile',
       theme: AppTheme.darkTheme,
       home: home,
       debugShowCheckedModeBanner: false,

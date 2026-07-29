@@ -39,11 +39,8 @@ dependencies:
   riverpod: ^2.6.1
   dio: ^5.10.0
   shared_preferences: ^2.3.3
-<<<<<<< HEAD
   google_fonts: ^6.2.1
   google_sign_in: ^6.2.1
-=======
->>>>>>> 335ef71dfd49fefbf39c61ade6ac545f36d28515
 
 dev_dependencies:
   flutter_test:
@@ -70,6 +67,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/Loginbackground.jpg
+    - assets/images/nexio_logo.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
