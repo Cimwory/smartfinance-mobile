@@ -5,7 +5,6 @@ import 'features/auth/presentation/login_screen.dart';
 import 'features/auth/providers/auth_provider.dart';
 import 'features/dashboard/presentation/admin_dashboard.dart';
 import 'features/onboarding/presentation/landing_screen.dart';
-import 'features/dashboard/presentation/user_dashboard.dart';
 
 void main() {
   runApp(
@@ -25,11 +24,7 @@ class MyApp extends ConsumerWidget {
     Widget home = const SplashScreen();
 
     if (!authState.isLoading && authState.isAuthenticated) {
-      if (authState.user != null && authState.user!['role'] == 'admin') {
-        home = const AdminDashboard();
-      } else {
-        home = const UserDashboard();
-      }
+      home = const AdminDashboard();
     } else if (!authState.isLoading && !authState.isAuthenticated) {
       home = const LandingScreen();
     }

@@ -68,6 +68,8 @@ flutter:
   assets:
     - assets/images/Loginbackground.jpg
     - assets/images/nexio_logo.png
+    - assets/images/backgroundfinance.jpg
+    - assets/images/abstract_finance_bg.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

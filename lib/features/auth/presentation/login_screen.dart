@@ -4,7 +4,7 @@ import '../../../core/theme/app_theme.dart';
 import '../providers/auth_provider.dart';
 import 'register_screen.dart';
 import '../../dashboard/presentation/admin_dashboard.dart';
-import '../../dashboard/presentation/user_dashboard.dart';
+
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -28,15 +28,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
       if (success) {
         final user = ref.read(authProvider).user;
-        if (user != null && user['role'] == 'admin') {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (_) => const AdminDashboard()),
-          );
-        } else {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (_) => const UserDashboard()),
-          );
-        }
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => const AdminDashboard()),
+        );
       } else {
         final error = ref.read(authProvider).error;
         ScaffoldMessenger.of(context).showSnackBar(
@@ -174,15 +168,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       if (success) {
                         if (context.mounted) {
                           final user = ref.read(authProvider).user;
-                          if (user != null && user['role'] == 'admin') {
-                            Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(builder: (_) => const AdminDashboard()),
-                            );
-                          } else {
-                            Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(builder: (_) => const UserDashboard()),
-                            );
-                          }
+                          Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(builder: (_) => const AdminDashboard()),
+                          );
                         }
                       } else {
                         if (context.mounted) {
@@ -255,15 +243,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         },
                         icon: const Icon(Icons.admin_panel_settings, size: 16, color: Colors.blueAccent),
                         label: const Text('Go to Admin', style: TextStyle(color: Colors.blueAccent, fontSize: 12)),
-                      ),
-                      TextButton.icon(
-                        onPressed: () {
-                          Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(builder: (_) => const UserDashboard()),
-                          );
-                        },
-                        icon: const Icon(Icons.person, size: 16, color: Colors.greenAccent),
-                        label: const Text('Go to User', style: TextStyle(color: Colors.greenAccent, fontSize: 12)),
                       ),
                     ],
                   ),
