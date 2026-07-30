@@ -192,7 +192,25 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     ),
                     const SizedBox(height: 24),
                     OutlinedButton.icon(
-                      onPressed: () {},
+                      onPressed: authState.isLoading ? null : () async {
+                        final success = await ref.read(authProvider.notifier).loginWithGoogle();
+                        if (success) {
+                          if (context.mounted) {
+                            Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(builder: (_) => const AdminDashboard()),
+                            );
+                          }
+                        } else {
+                          if (context.mounted) {
+                            final error = ref.read(authProvider).error;
+                            if (error != null) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text(error), backgroundColor: Colors.red),
+                              );
+                            }
+                          }
+                        }
+                      },
                       icon: Image.network(
                         'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/120px-Google_%22G%22_logo.svg.png',
                         height: 18,

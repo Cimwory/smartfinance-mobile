@@ -7,4 +7,13 @@ class ApiConstants {
   static const String register = '/register';
   static const String user = '/user';
   static const String logout = '/logout';
+  
+  static const String forgotPassword = '/forgot-password';
+  static const String verifyOtp = '/verify-otp';
+  static const String resetPassword = '/reset-password';
+
+  // Profile
+  static const String profileUpdate = '/profile/update';
+  static const String profileRequestEmailOtp = '/profile/change-email/request-otp';
+  static const String profileVerifyEmailOtp = '/profile/change-email/verify-otp';
 }

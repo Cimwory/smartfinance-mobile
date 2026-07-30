@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -127,6 +128,173 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 
+  Future<bool> sendOtp(String email) async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      final response = await _dio.post(ApiConstants.forgotPassword, data: {
+        'email': email,
+      });
+
+      if (response.statusCode == 200) {
+        state = state.copyWith(isLoading: false);
+        return true;
+      }
+      state = state.copyWith(isLoading: false, error: 'Failed to send OTP');
+      return false;
+    } on DioException catch (e) {
+      final errorMessage = e.response?.data['message'] ?? 'An error occurred';
+      state = state.copyWith(isLoading: false, error: errorMessage);
+      return false;
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+      return false;
+    }
+  }
+
+  Future<bool> verifyOtp(String email, String otp) async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      final response = await _dio.post(ApiConstants.verifyOtp, data: {
+        'email': email,
+        'otp': otp,
+      });
+
+      if (response.statusCode == 200) {
+        state = state.copyWith(isLoading: false);
+        return true;
+      }
+      state = state.copyWith(isLoading: false, error: 'Invalid OTP');
+      return false;
+    } on DioException catch (e) {
+      final errorMessage = e.response?.data['message'] ?? 'An error occurred';
+      state = state.copyWith(isLoading: false, error: errorMessage);
+      return false;
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+      return false;
+    }
+  }
+
+  Future<bool> resetPassword(String email, String otp, String password, String passwordConfirmation) async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      final response = await _dio.post(ApiConstants.resetPassword, data: {
+        'email': email,
+        'otp': otp,
+        'password': password,
+        'password_confirmation': passwordConfirmation,
+      });
+
+      if (response.statusCode == 200) {
+        state = state.copyWith(isLoading: false);
+        return true;
+      }
+      state = state.copyWith(isLoading: false, error: 'Failed to reset password');
+      return false;
+    } on DioException catch (e) {
+      final errorMessage = e.response?.data['message'] ?? 'An error occurred during password reset';
+      state = state.copyWith(isLoading: false, error: errorMessage);
+      return false;
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+      return false;
+    }
+  }
+
+  // Profile Update
+  Future<bool> updateProfile(String? username, File? avatarFile) async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      FormData formData = FormData();
+      
+      if (username != null && username.isNotEmpty) {
+        formData.fields.add(MapEntry('username', username));
+      }
+      
+      if (avatarFile != null) {
+        formData.files.add(
+          MapEntry(
+            'avatar',
+            await MultipartFile.fromFile(
+              avatarFile.path,
+              filename: avatarFile.path.split('/').last,
+            ),
+          ),
+        );
+      }
+
+      final response = await _dio.post(ApiConstants.profileUpdate, data: formData);
+
+      if (response.statusCode == 200) {
+        state = state.copyWith(
+          isLoading: false,
+          user: response.data['user'],
+        );
+        return true;
+      }
+      state = state.copyWith(isLoading: false, error: 'Gagal memperbarui profil');
+      return false;
+    } on DioException catch (e) {
+      final errorMessage = e.response?.data['message'] ?? 'Terjadi kesalahan saat memperbarui profil';
+      state = state.copyWith(isLoading: false, error: errorMessage);
+      return false;
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+      return false;
+    }
+  }
+
+  // Request OTP for Email Change
+  Future<bool> requestEmailChangeOtp(String newEmail) async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      final response = await _dio.post(ApiConstants.profileRequestEmailOtp, data: {
+        'new_email': newEmail,
+      });
+
+      if (response.statusCode == 200) {
+        state = state.copyWith(isLoading: false);
+        return true;
+      }
+      state = state.copyWith(isLoading: false, error: 'Gagal mengirim OTP ke email baru');
+      return false;
+    } on DioException catch (e) {
+      final errorMessage = e.response?.data['message'] ?? 'Terjadi kesalahan saat meminta OTP email baru';
+      state = state.copyWith(isLoading: false, error: errorMessage);
+      return false;
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+      return false;
+    }
+  }
+
+  // Verify OTP for Email Change
+  Future<bool> verifyEmailChangeOtp(String otp) async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      final response = await _dio.post(ApiConstants.profileVerifyEmailOtp, data: {
+        'otp': otp,
+      });
+
+      if (response.statusCode == 200) {
+        state = state.copyWith(
+          isLoading: false,
+          user: response.data['user'],
+        );
+        return true;
+      }
+      state = state.copyWith(isLoading: false, error: 'Gagal memverifikasi OTP');
+      return false;
+    } on DioException catch (e) {
+      final errorMessage = e.response?.data['message'] ?? 'Terjadi kesalahan saat memverifikasi OTP';
+      state = state.copyWith(isLoading: false, error: errorMessage);
+      return false;
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+      return false;
+    }
+  }
+
   Future<bool> loginWithGoogle() async {
     state = state.copyWith(isLoading: true, error: null);
     try {
@@ -166,8 +334,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
       );
       return true;
     } on DioException catch (e) {
-      String errorMessage = 'Failed to authenticate with Google';
-      if (e.response?.data != null && e.response?.data['message'] != null) {
+      String errorMessage = 'Failed to authenticate with Google: ${e.message ?? e.type.toString()}';
+      if (e.response?.data != null && e.response?.data is Map && e.response?.data['message'] != null) {
         errorMessage = e.response?.data['message'];
       }
       state = state.copyWith(isLoading: false, error: errorMessage);
