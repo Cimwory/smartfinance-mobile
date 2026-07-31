@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../auth/presentation/login_screen.dart';
+import '../../smart_finance/presentation/smart_finance_history_screen.dart';
 
 class AdminDashboard extends ConsumerWidget {
   const AdminDashboard({Key? key}) : super(key: key);
@@ -145,6 +146,22 @@ class AdminDashboard extends ConsumerWidget {
                                 textStyle: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
                               ),
                               child: const Text('Lihat Profile'),
+                            ),
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (_) => const SmartFinanceHistoryScreen()),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF14B8A6), // Teal color from theme
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                                textStyle: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
+                              ),
+                              child: const Text('Smart Finance'),
                             ),
                           ],
                         ),

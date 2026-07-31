@@ -88,8 +88,18 @@ class AuthNotifier extends StateNotifier<AuthState> {
       return true;
     } on DioException catch (e) {
       String errorMessage = 'Failed to login';
-      if (e.response?.data != null && e.response?.data['message'] != null) {
-        errorMessage = e.response?.data['message'];
+      if (e.response?.data != null && e.response?.data is Map) {
+        final data = e.response!.data as Map<String, dynamic>;
+        if (data['errors'] != null) {
+          final errors = data['errors'] as Map<String, dynamic>;
+          if (errors.isNotEmpty) {
+            errorMessage = errors.values.first[0].toString();
+          }
+        } else if (data['message'] != null) {
+          errorMessage = data['message'].toString();
+        }
+      } else if (e.type == DioExceptionType.connectionError || e.type == DioExceptionType.connectionTimeout) {
+        errorMessage = 'Connection refused. Ensure server is running on 10.0.2.2.';
       }
       state = state.copyWith(isLoading: false, error: errorMessage);
       return false;
@@ -120,8 +130,18 @@ class AuthNotifier extends StateNotifier<AuthState> {
       return true;
     } on DioException catch (e) {
       String errorMessage = 'Failed to register';
-      if (e.response?.data != null && e.response?.data['message'] != null) {
-        errorMessage = e.response?.data['message'];
+      if (e.response?.data != null && e.response?.data is Map) {
+        final data = e.response!.data as Map<String, dynamic>;
+        if (data['errors'] != null) {
+          final errors = data['errors'] as Map<String, dynamic>;
+          if (errors.isNotEmpty) {
+            errorMessage = errors.values.first[0].toString();
+          }
+        } else if (data['message'] != null) {
+          errorMessage = data['message'].toString();
+        }
+      } else if (e.type == DioExceptionType.connectionError || e.type == DioExceptionType.connectionTimeout) {
+        errorMessage = 'Connection refused. Ensure server is running on 10.0.2.2.';
       }
       state = state.copyWith(isLoading: false, error: errorMessage);
       return false;
