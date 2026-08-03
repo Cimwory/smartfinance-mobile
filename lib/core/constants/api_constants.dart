@@ -20,4 +20,17 @@ class ApiConstants {
   // Smart Finance
   static const String smartFinance = 'smart-finance';
   static const String smartFinanceAnalyze = 'smart-finance/analyze';
+
+  // Financial Targets
+  static const String targets = 'targets';
+
+  // Tax
+  static const String tax = 'tax';
+  static const String taxCalculate = 'tax/calculate';
+
+  // Stata
+  static const String stata = 'stata';
+  static const String stataImport = 'stata/import';
+  static const String stataCommand = 'stata/command';
+  static const String stataDataset = 'stata/dataset';
 }

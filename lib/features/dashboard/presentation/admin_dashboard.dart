@@ -4,6 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../auth/presentation/login_screen.dart';
 import '../../smart_finance/presentation/smart_finance_history_screen.dart';
+import '../../financial_targets/presentation/financial_targets_screen.dart';
+import '../../tax/presentation/tax_history_screen.dart';
+import '../../stata/presentation/stata_screen.dart';
 
 class AdminDashboard extends ConsumerWidget {
   const AdminDashboard({Key? key}) : super(key: key);
@@ -162,6 +165,54 @@ class AdminDashboard extends ConsumerWidget {
                                 textStyle: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
                               ),
                               child: const Text('Smart Finance'),
+                            ),
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (_) => const FinancialTargetsScreen()),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFFF59E0B), // Amber color
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                                textStyle: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
+                              ),
+                              child: const Text('Financial Targets'),
+                            ),
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (_) => const TaxHistoryScreen()),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF10B981), // Emerald color
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                                textStyle: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
+                              ),
+                              child: const Text('Perpajakan'),
+                            ),
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (_) => const StataScreen()),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF2563EB), // Blue color
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                                textStyle: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
+                              ),
+                              child: const Text('Stata Analytics'),
                             ),
                           ],
                         ),

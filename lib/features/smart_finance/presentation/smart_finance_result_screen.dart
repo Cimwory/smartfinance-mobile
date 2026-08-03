@@ -3,15 +3,18 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import '../../../core/theme/app_theme.dart';
 import '../data/models/smart_finance_model.dart';
+import '../providers/smart_finance_pdf_service.dart';
 
 class SmartFinanceResultScreen extends StatelessWidget {
   final SmartFinanceResult result;
   final bool isHistory;
+  final String? periode;
 
   const SmartFinanceResultScreen({
     Key? key,
     required this.result,
     this.isHistory = false,
+    this.periode,
   }) : super(key: key);
 
   @override
@@ -42,6 +45,17 @@ class SmartFinanceResultScreen extends StatelessWidget {
                 icon: const Icon(Icons.close),
                 onPressed: () => Navigator.pop(context),
               ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.picture_as_pdf),
+            tooltip: 'Download PDF',
+            onPressed: () async {
+              final actualPeriode = periode ?? DateFormat('MMMM yyyy', 'id_ID').format(DateTime.now());
+              await SmartFinancePdfService.generateAndSharePdf(result, actualPeriode);
+            },
+          ),
+          const SizedBox(width: 8),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
