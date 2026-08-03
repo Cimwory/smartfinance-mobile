@@ -5,6 +5,7 @@ import '../providers/auth_provider.dart';
 import 'forgot_password_email_screen.dart';
 import 'register_screen.dart';
 import '../../dashboard/presentation/admin_dashboard.dart';
+import '../../dashboard/presentation/home_screen.dart';
 
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -30,7 +31,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       if (success) {
         final user = ref.read(authProvider).user;
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => const AdminDashboard()),
+          MaterialPageRoute(builder: (_) => const HomeScreen()),
         );
       } else {
         final error = ref.read(authProvider).error;
@@ -176,7 +177,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         if (context.mounted) {
                           final user = ref.read(authProvider).user;
                           Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(builder: (_) => const AdminDashboard()),
+                            MaterialPageRoute(builder: (_) => const HomeScreen()),
                           );
                         }
                       } else {
@@ -244,8 +245,51 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     children: [
                       TextButton.icon(
                         onPressed: () {
-                          Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(builder: (_) => const AdminDashboard()),
+                          showDialog(
+                            context: context,
+                            builder: (ctx) {
+                              final TextEditingController pinController = TextEditingController();
+                              return AlertDialog(
+                                backgroundColor: AppTheme.cardColor,
+                                title: const Text('Admin Access', style: TextStyle(color: Colors.white)),
+                                content: TextField(
+                                  controller: pinController,
+                                  obscureText: true,
+                                  style: const TextStyle(color: Colors.white),
+                                  decoration: const InputDecoration(
+                                    labelText: 'Enter Admin PIN',
+                                    labelStyle: TextStyle(color: AppTheme.textSecondary),
+                                    enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: AppTheme.textSecondary)),
+                                    focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: AppTheme.primaryColor)),
+                                  ),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(ctx),
+                                    child: const Text('Cancel', style: TextStyle(color: AppTheme.textSecondary)),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      if (pinController.text == 'admin123') {
+                                        Navigator.pop(ctx);
+                                        Navigator.of(context).pushReplacement(
+                                          MaterialPageRoute(builder: (_) => const AdminDashboard()),
+                                        );
+                                      } else {
+                                        Navigator.pop(ctx);
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          const SnackBar(
+                                            content: Text('Invalid PIN'),
+                                            backgroundColor: Colors.red,
+                                          ),
+                                        );
+                                      }
+                                    },
+                                    child: const Text('OK', style: TextStyle(color: AppTheme.primaryColor)),
+                                  ),
+                                ],
+                              );
+                            },
                           );
                         },
                         icon: const Icon(Icons.admin_panel_settings, size: 16, color: Colors.blueAccent),

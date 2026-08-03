@@ -3,10 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../auth/presentation/login_screen.dart';
-import '../../smart_finance/presentation/smart_finance_history_screen.dart';
-import '../../financial_targets/presentation/financial_targets_screen.dart';
-import '../../tax/presentation/tax_history_screen.dart';
-import '../../stata/presentation/stata_screen.dart';
+import '../../admin/presentation/user_management_screen.dart';
 
 class AdminDashboard extends ConsumerWidget {
   const AdminDashboard({Key? key}) : super(key: key);
@@ -118,101 +115,19 @@ class AdminDashboard extends ConsumerWidget {
                           children: [
                             ElevatedButton(
                               onPressed: () {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('Modul Admin masih dalam tahap pengembangan.')),
-                                );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF6366F1),
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                                textStyle: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
-                              ),
-                              child: const Text('Ke Dashboard Admin'),
-                            ),
-                            ElevatedButton(
-                              onPressed: () {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('Profil Admin')),
-                                );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white.withOpacity(0.1),
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30),
-                                  side: BorderSide(color: Colors.white.withOpacity(0.2)),
-                                ),
-                                elevation: 0,
-                                textStyle: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
-                              ),
-                              child: const Text('Lihat Profile'),
-                            ),
-                            ElevatedButton(
-                              onPressed: () {
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(builder: (_) => const SmartFinanceHistoryScreen()),
+                                  MaterialPageRoute(builder: (_) => const UserManagementScreen()),
                                 );
                               },
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF14B8A6), // Teal color from theme
+                                backgroundColor: const Color(0xFF6366F1), // Indigo color
                                 foregroundColor: Colors.white,
                                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                                 textStyle: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
                               ),
-                              child: const Text('Smart Finance'),
-                            ),
-                            ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (_) => const FinancialTargetsScreen()),
-                                );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFFF59E0B), // Amber color
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                                textStyle: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
-                              ),
-                              child: const Text('Financial Targets'),
-                            ),
-                            ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (_) => const TaxHistoryScreen()),
-                                );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF10B981), // Emerald color
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                                textStyle: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
-                              ),
-                              child: const Text('Perpajakan'),
-                            ),
-                            ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (_) => const StataScreen()),
-                                );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF2563EB), // Blue color
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                                textStyle: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
-                              ),
-                              child: const Text('Stata Analytics'),
+                              child: const Text('Kelola User'),
                             ),
                           ],
                         ),

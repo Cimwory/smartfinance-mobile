@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/theme/app_theme.dart';
 import 'features/auth/presentation/login_screen.dart';
 import 'features/auth/providers/auth_provider.dart';
-import 'features/dashboard/presentation/admin_dashboard.dart';
+import 'features/dashboard/presentation/home_screen.dart';
 import 'features/onboarding/presentation/landing_screen.dart';
 
 void main() async {
@@ -28,7 +28,7 @@ class MyApp extends ConsumerWidget {
     Widget home = const SplashScreen();
 
     if (!authState.isLoading && authState.isAuthenticated) {
-      home = const AdminDashboard();
+      home = const HomeScreen();
     } else if (!authState.isLoading && !authState.isAuthenticated) {
       home = const LandingScreen();
     }
