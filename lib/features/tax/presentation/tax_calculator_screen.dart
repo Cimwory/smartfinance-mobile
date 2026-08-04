@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/utils/currency_formatter.dart';
 import '../providers/tax_provider.dart';
+import 'tax_detail_screen.dart';
 
 class TaxCalculatorScreen extends ConsumerStatefulWidget {
   const TaxCalculatorScreen({super.key});
@@ -55,20 +58,24 @@ class _TaxCalculatorScreenState extends ConsumerState<TaxCalculatorScreen> {
       'tahun_pajak': _tahunController.text,
       'metode_perhitungan': _metodePerhitungan,
       'status_wajib_pajak': _statusWajibPajak,
-      'penghasilan_bulanan': _penghasilanBulananController.text,
-      'penghasilan_tidak_teratur': _penghasilanTidakTeraturController.text,
-      'iuran_pensiun': _iuranPensiunController.text,
-      'zakat': _zakatController.text,
-      'kredit_pajak': _kreditPajakController.text,
+      'penghasilan_bulanan': _penghasilanBulananController.text.replaceAll('.', ''),
+      'penghasilan_tidak_teratur': _penghasilanTidakTeraturController.text.replaceAll('.', ''),
+      'iuran_pensiun': _iuranPensiunController.text.replaceAll('.', ''),
+      'zakat': _zakatController.text.replaceAll('.', ''),
+      'kredit_pajak': _kreditPajakController.text.replaceAll('.', ''),
     };
 
-    final success = await ref.read(taxProvider.notifier).calculateTax(data);
+    final newId = await ref.read(taxProvider.notifier).calculateTax(data);
 
-    if (success && mounted) {
+    if (newId != null && mounted) {
       Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Kalkulasi pajak berhasil disimpan!')),
       );
+      if (newId > 0) {
+        final result = ref.read(taxProvider).history.firstWhere((element) => element.id == newId);
+        Navigator.push(context, MaterialPageRoute(builder: (_) => TaxDetailScreen(result: result.hasilJson, id: newId)));
+      }
     }
   }
 
@@ -196,6 +203,7 @@ class _TaxCalculatorScreenState extends ConsumerState<TaxCalculatorScreen> {
             TextFormField(
               controller: _penghasilanBulananController,
               keyboardType: TextInputType.number,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly, CurrencyInputFormatter()],
               decoration: InputDecoration(
                 labelText: 'Penghasilan Bruto (Per Bulan)',
                 hintText: 'Gaji pokok + tunjangan teratur',
@@ -207,7 +215,7 @@ class _TaxCalculatorScreenState extends ConsumerState<TaxCalculatorScreen> {
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) return 'Wajib diisi';
-                if (double.tryParse(value) == null) return 'Harus berupa angka';
+                if (double.tryParse(value.replaceAll('.', '')) == null) return 'Harus berupa angka';
                 return null;
               },
             ),
@@ -216,6 +224,7 @@ class _TaxCalculatorScreenState extends ConsumerState<TaxCalculatorScreen> {
             TextFormField(
               controller: _penghasilanTidakTeraturController,
               keyboardType: TextInputType.number,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly, CurrencyInputFormatter()],
               decoration: InputDecoration(
                 labelText: 'Penghasilan Tidak Teratur',
                 hintText: 'THR, Bonus, Insentif (Total setahun)',
@@ -231,6 +240,7 @@ class _TaxCalculatorScreenState extends ConsumerState<TaxCalculatorScreen> {
             TextFormField(
               controller: _iuranPensiunController,
               keyboardType: TextInputType.number,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly, CurrencyInputFormatter()],
               decoration: InputDecoration(
                 labelText: 'Iuran Pensiun / BPJS (Per Bulan)',
                 hintText: 'Ditanggung pegawai',
@@ -246,6 +256,7 @@ class _TaxCalculatorScreenState extends ConsumerState<TaxCalculatorScreen> {
             TextFormField(
               controller: _zakatController,
               keyboardType: TextInputType.number,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly, CurrencyInputFormatter()],
               decoration: InputDecoration(
                 labelText: 'Zakat / Sumbangan Keagamaan',
                 hintText: 'Total dibayar tahun ini',
@@ -261,6 +272,7 @@ class _TaxCalculatorScreenState extends ConsumerState<TaxCalculatorScreen> {
             TextFormField(
               controller: _kreditPajakController,
               keyboardType: TextInputType.number,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly, CurrencyInputFormatter()],
               decoration: InputDecoration(
                 labelText: 'Kredit Pajak (PPh 21 yang sudah dipotong)',
                 hintText: 'Opsional',

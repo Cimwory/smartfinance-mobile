@@ -17,7 +17,7 @@ class FinancialTargetDepositModel {
     return FinancialTargetDepositModel(
       id: json['id'],
       financialTargetId: json['financial_target_id'],
-      amount: (json['amount'] ?? 0).toDouble(),
+      amount: double.tryParse(json['amount']?.toString() ?? '0') ?? 0.0,
       date: json['date'] ?? '',
       note: json['note'],
     );
@@ -69,18 +69,18 @@ class FinancialTargetModel {
       name: json['name'] ?? '',
       description: json['description'],
       category: json['category'] ?? '',
-      targetAmount: (json['target_amount'] ?? 0).toDouble(),
-      currentAmount: (json['current_amount'] ?? 0).toDouble(),
+      targetAmount: double.tryParse(json['target_amount']?.toString() ?? '0') ?? 0.0,
+      currentAmount: double.tryParse(json['current_amount']?.toString() ?? '0') ?? 0.0,
       targetDate: json['target_date'] ?? '',
       status: json['status'] ?? 'active',
       priority: json['priority'],
-      progress: (json['progress'] ?? 0).toDouble(),
-      remaining: (json['remaining'] ?? 0).toDouble(),
-      daysRemaining: json['days_remaining'] ?? 0,
-      isAchieved: json['is_achieved'] ?? false,
-      isOverdue: json['is_overdue'] ?? false,
+      progress: double.tryParse(json['progress']?.toString() ?? '0') ?? 0.0,
+      remaining: double.tryParse(json['remaining']?.toString() ?? '0') ?? 0.0,
+      daysRemaining: int.tryParse(json['days_remaining']?.toString() ?? '0') ?? 0,
+      isAchieved: json['is_achieved'] == 1 || json['is_achieved'] == true,
+      isOverdue: json['is_overdue'] == 1 || json['is_overdue'] == true,
       performance: json['performance'],
-      recommendedMonthly: (json['recommended_monthly'] ?? 0).toDouble(),
+      recommendedMonthly: double.tryParse(json['recommended_monthly']?.toString() ?? '0') ?? 0.0,
     );
   }
 }

@@ -99,7 +99,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
           errorMessage = data['message'].toString();
         }
       } else if (e.type == DioExceptionType.connectionError || e.type == DioExceptionType.connectionTimeout) {
-        errorMessage = 'Connection refused. Ensure server is running on 10.0.2.2.';
+        errorMessage = 'Connection refused. Ensure server is running.';
       }
       state = state.copyWith(isLoading: false, error: errorMessage);
       return false;
@@ -141,7 +141,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
           errorMessage = data['message'].toString();
         }
       } else if (e.type == DioExceptionType.connectionError || e.type == DioExceptionType.connectionTimeout) {
-        errorMessage = 'Connection refused. Ensure server is running on 10.0.2.2.';
+        errorMessage = 'Connection refused. Ensure server is running.';
       }
       state = state.copyWith(isLoading: false, error: errorMessage);
       return false;
@@ -337,7 +337,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
         return false;
       }
 
-      final response = await _dio.post('/auth/google', data: {
+      final response = await _dio.post(ApiConstants.authGoogle, data: {
         'access_token': accessToken,
       });
 

@@ -196,8 +196,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         final success = await ref.read(authProvider.notifier).loginWithGoogle();
                         if (success) {
                           if (context.mounted) {
-                            Navigator.of(context).pushReplacement(
+                            Navigator.of(context).pushAndRemoveUntil(
                               MaterialPageRoute(builder: (_) => const HomeScreen()),
+                              (route) => false,
                             );
                           }
                         } else {

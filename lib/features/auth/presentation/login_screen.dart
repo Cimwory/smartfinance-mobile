@@ -30,8 +30,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
       if (success) {
         final user = ref.read(authProvider).user;
-        Navigator.of(context).pushReplacement(
+        Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (_) => const HomeScreen()),
+          (route) => false,
         );
       } else {
         final error = ref.read(authProvider).error;
@@ -176,8 +177,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       if (success) {
                         if (context.mounted) {
                           final user = ref.read(authProvider).user;
-                          Navigator.of(context).pushReplacement(
+                          Navigator.of(context).pushAndRemoveUntil(
                             MaterialPageRoute(builder: (_) => const HomeScreen()),
+                            (route) => false,
                           );
                         }
                       } else {
@@ -272,8 +274,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                     onPressed: () {
                                       if (pinController.text == 'admin123') {
                                         Navigator.pop(ctx);
-                                        Navigator.of(context).pushReplacement(
+                                        Navigator.of(context).pushAndRemoveUntil(
                                           MaterialPageRoute(builder: (_) => const AdminDashboard()),
+                                          (route) => false,
                                         );
                                       } else {
                                         Navigator.pop(ctx);

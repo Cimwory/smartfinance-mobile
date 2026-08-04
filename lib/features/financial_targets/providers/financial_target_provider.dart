@@ -134,22 +134,25 @@ class FinancialTargetNotifier extends StateNotifier<FinancialTargetState> {
     }
   }
 
-  Future<bool> createTarget(Map<String, dynamic> data) async {
+  Future<int?> createTarget(Map<String, dynamic> data) async {
     state = state.copyWith(isLoading: true, clearError: true);
     try {
-      await _dio.post(ApiConstants.targets, data: data);
+      final response = await _dio.post(ApiConstants.targets, data: data);
       state = state.copyWith(isLoading: false);
       await fetchTargets();
-      return true;
+      if (response.data != null && response.data['target'] != null && response.data['target']['id'] != null) {
+        return int.tryParse(response.data['target']['id'].toString()) ?? -1;
+      }
+      return -1; // success but no ID
     } on DioException catch (e) {
       state = state.copyWith(
         isLoading: false,
         error: _getErrorMessage(e, 'Failed to create target'),
       );
-      return false;
+      return null;
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
-      return false;
+      return null;
     }
   }
 

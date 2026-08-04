@@ -102,22 +102,26 @@ class TaxNotifier extends StateNotifier<TaxState> {
     }
   }
 
-  Future<bool> calculateTax(Map<String, dynamic> data) async {
+  Future<int?> calculateTax(Map<String, dynamic> data) async {
     state = state.copyWith(isLoading: true, clearError: true);
     try {
-      await _dio.post(ApiConstants.taxCalculate, data: data);
+      final response = await _dio.post(ApiConstants.taxCalculate, data: data);
       state = state.copyWith(isLoading: false);
       await fetchTaxData();
-      return true;
+      if (response.data != null && response.data['analysis'] != null && response.data['analysis']['id'] != null) {
+        return int.tryParse(response.data['analysis']['id'].toString()) ?? -1;
+      }
+      return -1;
+
     } on DioException catch (e) {
       state = state.copyWith(
         isLoading: false,
         error: _getErrorMessage(e, 'Failed to calculate tax'),
       );
-      return false;
+      return null;
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
-      return false;
+      return null;
     }
   }
 

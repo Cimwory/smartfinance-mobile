@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../providers/financial_target_provider.dart';
 import '../data/models/financial_target_model.dart';
+import '../../../core/utils/currency_formatter.dart';
+import 'target_detail_screen.dart';
 
 class CreateEditTargetScreen extends ConsumerStatefulWidget {
   final FinancialTargetModel? target;
@@ -38,8 +40,8 @@ class _CreateEditTargetScreenState extends ConsumerState<CreateEditTargetScreen>
       final t = widget.target!;
       _nameController.text = t.name;
       _descriptionController.text = t.description ?? '';
-      _targetAmountController.text = t.targetAmount.toInt().toString();
-      _currentAmountController.text = t.currentAmount.toInt().toString();
+      _targetAmountController.text = CurrencyInputFormatter.formatString(t.targetAmount.toInt().toString());
+      _currentAmountController.text = CurrencyInputFormatter.formatString(t.currentAmount.toInt().toString());
       _selectedCategory = t.category;
       try {
         _selectedDate = DateTime.parse(t.targetDate);
@@ -86,25 +88,28 @@ class _CreateEditTargetScreenState extends ConsumerState<CreateEditTargetScreen>
       'name': _nameController.text,
       'description': _descriptionController.text,
       'category': _selectedCategory,
-      'target_amount': _targetAmountController.text,
-      'current_amount': _currentAmountController.text.isNotEmpty ? _currentAmountController.text : '0',
+      'target_amount': _targetAmountController.text.replaceAll('.', ''),
+      'current_amount': _currentAmountController.text.isNotEmpty ? _currentAmountController.text.replaceAll('.', '') : '0',
       'target_date': DateFormat('yyyy-MM-dd').format(_selectedDate!),
       'status': widget.target?.status ?? 'active',
       'priority': widget.target?.priority ?? 1,
     };
 
-    bool success;
     if (widget.target != null) {
-      success = await ref.read(financialTargetProvider.notifier).updateTarget(widget.target!.id, data);
+      final success = await ref.read(financialTargetProvider.notifier).updateTarget(widget.target!.id, data);
+      if (success && mounted) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Target updated!')));
+      }
     } else {
-      success = await ref.read(financialTargetProvider.notifier).createTarget(data);
-    }
-
-    if (success && mounted) {
-      Navigator.pop(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(widget.target == null ? 'Target created!' : 'Target updated!')),
-      );
+      final newId = await ref.read(financialTargetProvider.notifier).createTarget(data);
+      if (newId != null && mounted) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Target created!')));
+        if (newId > 0) {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => TargetDetailScreen(targetId: newId)));
+        }
+      }
     }
   }
 
@@ -129,21 +134,27 @@ class _CreateEditTargetScreenState extends ConsumerState<CreateEditTargetScreen>
           children: [
             TextFormField(
               controller: _nameController,
+              style: const TextStyle(color: Colors.black87),
               decoration: InputDecoration(
                 labelText: 'Target Name',
+                labelStyle: const TextStyle(color: Colors.black54),
                 hintText: 'e.g. Dream House, Emergency Fund',
+                hintStyle: const TextStyle(color: Colors.black38),
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                prefixIcon: const Icon(Icons.track_changes),
+                prefixIcon: const Icon(Icons.track_changes, color: Colors.black54),
               ),
               validator: (value) => value == null || value.isEmpty ? 'Please enter a name' : null,
             ),
             const SizedBox(height: 20),
             DropdownButtonFormField<String>(
               value: _selectedCategory,
+              style: const TextStyle(color: Colors.black87),
+              dropdownColor: Colors.white,
               decoration: InputDecoration(
                 labelText: 'Category',
+                labelStyle: const TextStyle(color: Colors.black54),
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                prefixIcon: const Icon(Icons.category),
+                prefixIcon: const Icon(Icons.category, color: Colors.black54),
               ),
               items: _categories.map((String category) {
                 return DropdownMenuItem<String>(
@@ -159,14 +170,18 @@ class _CreateEditTargetScreenState extends ConsumerState<CreateEditTargetScreen>
             TextFormField(
               controller: _targetAmountController,
               keyboardType: TextInputType.number,
+              inputFormatters: [CurrencyInputFormatter()],
+              style: const TextStyle(color: Colors.black87),
               decoration: InputDecoration(
                 labelText: 'Target Amount (Rp)',
+                labelStyle: const TextStyle(color: Colors.black54),
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                prefixIcon: const Icon(Icons.monetization_on),
+                prefixIcon: const Icon(Icons.monetization_on, color: Colors.black54),
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) return 'Please enter target amount';
-                if (double.tryParse(value) == null) return 'Must be a valid number';
+                final cleanValue = value.replaceAll('.', '');
+                if (double.tryParse(cleanValue) == null) return 'Must be a valid number';
                 return null;
               },
             ),
@@ -175,10 +190,13 @@ class _CreateEditTargetScreenState extends ConsumerState<CreateEditTargetScreen>
               TextFormField(
                 controller: _currentAmountController,
                 keyboardType: TextInputType.number,
+                inputFormatters: [CurrencyInputFormatter()],
+                style: const TextStyle(color: Colors.black87),
                 decoration: InputDecoration(
                   labelText: 'Initial Saved Amount (Rp) - Optional',
+                  labelStyle: const TextStyle(color: Colors.black54),
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                  prefixIcon: const Icon(Icons.savings),
+                  prefixIcon: const Icon(Icons.savings, color: Colors.black54),
                 ),
               ),
             if (!isEditing) const SizedBox(height: 20),
@@ -187,11 +205,13 @@ class _CreateEditTargetScreenState extends ConsumerState<CreateEditTargetScreen>
               child: InputDecorator(
                 decoration: InputDecoration(
                   labelText: 'Target Date',
+                  labelStyle: const TextStyle(color: Colors.black54),
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                  prefixIcon: const Icon(Icons.calendar_today),
+                  prefixIcon: const Icon(Icons.calendar_today, color: Colors.black54),
                 ),
                 child: Text(
                   _selectedDate == null ? 'Select a date' : DateFormat('dd MMM yyyy').format(_selectedDate!),
+                  style: const TextStyle(color: Colors.black87),
                 ),
               ),
             ),
@@ -199,10 +219,12 @@ class _CreateEditTargetScreenState extends ConsumerState<CreateEditTargetScreen>
             TextFormField(
               controller: _descriptionController,
               maxLines: 3,
+              style: const TextStyle(color: Colors.black87),
               decoration: InputDecoration(
                 labelText: 'Description (Optional)',
+                labelStyle: const TextStyle(color: Colors.black54),
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                prefixIcon: const Icon(Icons.notes),
+                prefixIcon: const Icon(Icons.notes, color: Colors.black54),
               ),
             ),
             const SizedBox(height: 32),
