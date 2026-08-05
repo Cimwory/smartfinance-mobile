@@ -357,6 +357,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
       String errorMessage = 'Failed to authenticate with Google: ${e.message ?? e.type.toString()}';
       if (e.response?.data != null && e.response?.data is Map && e.response?.data['message'] != null) {
         errorMessage = e.response?.data['message'];
+      } else if (e.type == DioExceptionType.connectionError || e.type == DioExceptionType.connectionTimeout) {
+        errorMessage = 'Koneksi ke server gagal. Pastikan server berjalan atau periksa koneksi internet Anda.';
       }
       state = state.copyWith(isLoading: false, error: errorMessage);
       return false;

@@ -33,9 +33,9 @@ class TaxAnalysisModel {
 
   factory TaxAnalysisModel.fromJson(Map<String, dynamic> json) {
     return TaxAnalysisModel(
-      id: json['id'] ?? 0,
-      userId: json['user_id'] ?? 0,
-      tahunPajak: json['tahun_pajak'] ?? 0,
+      id: json['id'] is int ? json['id'] : int.tryParse(json['id']?.toString() ?? '') ?? 0,
+      userId: json['user_id'] is int ? json['user_id'] : int.tryParse(json['user_id']?.toString() ?? '') ?? 0,
+      tahunPajak: json['tahun_pajak'] is int ? json['tahun_pajak'] : int.tryParse(json['tahun_pajak']?.toString() ?? '') ?? 0,
       penghasilanBulanan: (json['penghasilan_bulanan'] ?? 0).toDouble(),
       penghasilanTidakTeratur: (json['penghasilan_tidak_teratur'] ?? 0).toDouble(),
       biayaJabatan: (json['biaya_jabatan'] ?? 0).toDouble(),
@@ -102,7 +102,7 @@ class TaxResultModel {
 
   factory TaxResultModel.fromJson(Map<String, dynamic> json) {
     return TaxResultModel(
-      tahunPajak: json['tahun_pajak'] ?? 0,
+      tahunPajak: json['tahun_pajak'] is int ? json['tahun_pajak'] : int.tryParse(json['tahun_pajak']?.toString() ?? '') ?? 0,
       metode: json['metode'] ?? '',
       statusWajibPajak: json['status_wajib_pajak'] ?? '',
       penghasilanBulanan: (json['penghasilan_bulanan'] ?? 0).toDouble(),

@@ -73,8 +73,13 @@ class _TaxCalculatorScreenState extends ConsumerState<TaxCalculatorScreen> {
         const SnackBar(content: Text('Kalkulasi pajak berhasil disimpan!')),
       );
       if (newId > 0) {
-        final result = ref.read(taxProvider).history.firstWhere((element) => element.id == newId);
-        Navigator.push(context, MaterialPageRoute(builder: (_) => TaxDetailScreen(result: result.hasilJson, id: newId)));
+        try {
+          final result = ref.read(taxProvider).history.firstWhere((element) => element.id == newId);
+          Navigator.push(context, MaterialPageRoute(builder: (_) => TaxDetailScreen(result: result.hasilJson, id: newId)));
+        } catch (e) {
+          // If firstWhere fails, we can just wait a bit or show an error
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Berhasil disimpan, silakan cek riwayat.')));
+        }
       }
     }
   }

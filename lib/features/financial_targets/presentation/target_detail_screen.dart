@@ -26,6 +26,7 @@ class _TargetDetailScreenState extends ConsumerState<TargetDetailScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      backgroundColor: AppTheme.cardColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -45,15 +46,17 @@ class _TargetDetailScreenState extends ConsumerState<TargetDetailScreen> {
 
     if (state.isLoading && target == null) {
       return Scaffold(
-        appBar: AppBar(backgroundColor: Colors.white, foregroundColor: Colors.black),
-        body: const Center(child: CircularProgressIndicator()),
+        backgroundColor: AppTheme.backgroundColor,
+        appBar: AppBar(backgroundColor: Colors.transparent, foregroundColor: Colors.white, elevation: 0),
+        body: const Center(child: CircularProgressIndicator(color: AppTheme.primaryColor)),
       );
     }
 
     if (target == null) {
       return Scaffold(
-        appBar: AppBar(backgroundColor: Colors.white, foregroundColor: Colors.black),
-        body: const Center(child: Text('Target not found')),
+        backgroundColor: AppTheme.backgroundColor,
+        appBar: AppBar(backgroundColor: Colors.transparent, foregroundColor: Colors.white, elevation: 0),
+        body: const Center(child: Text('Target not found', style: TextStyle(color: AppTheme.textSecondary))),
       );
     }
 
@@ -203,18 +206,17 @@ class _TargetDetailScreenState extends ConsumerState<TargetDetailScreen> {
               ),
               const SizedBox(height: 24),
 
-              // Recommended Action
               if (target.status == 'active' && target.recommendedMonthly > 0)
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.amber.shade50,
+                    color: Colors.amber.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: Colors.amber.shade200),
+                    border: Border.all(color: Colors.amber.withOpacity(0.3)),
                   ),
                   child: Row(
                     children: [
-                      Icon(Icons.lightbulb_outline, color: Colors.amber.shade700),
+                      Icon(Icons.lightbulb_outline, color: Colors.amber.shade300),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Column(
@@ -222,12 +224,12 @@ class _TargetDetailScreenState extends ConsumerState<TargetDetailScreen> {
                           children: [
                             Text(
                               'Recommendation',
-                              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.amber.shade900),
+                              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.amber.shade300),
                             ),
                             const SizedBox(height: 4),
                             Text(
                               'Save ${currencyFormat.format(target.recommendedMonthly)} per month to reach your goal on time.',
-                              style: TextStyle(color: Colors.amber.shade900, fontSize: 12),
+                              style: TextStyle(color: Colors.amber.shade100, fontSize: 12),
                             ),
                           ],
                         ),
@@ -323,12 +325,13 @@ class _TargetDetailScreenState extends ConsumerState<TargetDetailScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Target'),
-        content: const Text('Are you sure you want to delete this financial target? All deposit history will also be deleted.'),
+        backgroundColor: AppTheme.cardColor,
+        title: const Text('Delete Target', style: TextStyle(color: Colors.white)),
+        content: const Text('Are you sure you want to delete this financial target? All deposit history will also be deleted.', style: TextStyle(color: AppTheme.textSecondary)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: const Text('Cancel', style: TextStyle(color: Colors.white70)),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
@@ -351,12 +354,13 @@ class _TargetDetailScreenState extends ConsumerState<TargetDetailScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Deposit'),
-        content: const Text('Are you sure you want to remove this deposit?'),
+        backgroundColor: AppTheme.cardColor,
+        title: const Text('Delete Deposit', style: TextStyle(color: Colors.white)),
+        content: const Text('Are you sure you want to remove this deposit?', style: TextStyle(color: AppTheme.textSecondary)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: const Text('Cancel', style: TextStyle(color: Colors.white70)),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),

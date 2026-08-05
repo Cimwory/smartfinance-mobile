@@ -72,16 +72,19 @@ class _AddDepositDialogState extends ConsumerState<AddDepositDialog> {
           children: [
             const Text(
               'Add Deposit',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
             ),
             const SizedBox(height: 20),
             TextFormField(
               controller: _amountController,
               keyboardType: TextInputType.number,
+              style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
                 labelText: 'Amount (Rp)',
+                labelStyle: const TextStyle(color: Colors.white70),
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                prefixIcon: const Icon(Icons.monetization_on),
+                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.white24)),
+                prefixIcon: const Icon(Icons.monetization_on, color: Colors.white70),
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) return 'Please enter amount';
@@ -96,19 +99,24 @@ class _AddDepositDialogState extends ConsumerState<AddDepositDialog> {
               child: InputDecorator(
                 decoration: InputDecoration(
                   labelText: 'Date',
+                  labelStyle: const TextStyle(color: Colors.white70),
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                  prefixIcon: const Icon(Icons.calendar_today),
+                  enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.white24)),
+                  prefixIcon: const Icon(Icons.calendar_today, color: Colors.white70),
                 ),
-                child: Text(DateFormat('dd MMM yyyy').format(_selectedDate)),
+                child: Text(DateFormat('dd MMM yyyy').format(_selectedDate), style: const TextStyle(color: Colors.white)),
               ),
             ),
             const SizedBox(height: 16),
             TextFormField(
               controller: _noteController,
+              style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
                 labelText: 'Note (Optional)',
+                labelStyle: const TextStyle(color: Colors.white70),
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                prefixIcon: const Icon(Icons.note),
+                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.white24)),
+                prefixIcon: const Icon(Icons.note, color: Colors.white70),
               ),
             ),
             const SizedBox(height: 24),
@@ -122,7 +130,7 @@ class _AddDepositDialogState extends ConsumerState<AddDepositDialog> {
                 ),
                 child: isLoading
                     ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                    : const Text('Save Deposit', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    : const Text('Save Deposit', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
               ),
             ),
           ],

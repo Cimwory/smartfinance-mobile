@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import '../providers/financial_target_provider.dart';
 import '../data/models/financial_target_model.dart';
 import '../../../core/utils/currency_formatter.dart';
+import '../../../core/theme/app_theme.dart';
 import 'target_detail_screen.dart';
 
 class CreateEditTargetScreen extends ConsumerStatefulWidget {
@@ -119,13 +120,12 @@ class _CreateEditTargetScreenState extends ConsumerState<CreateEditTargetScreen>
     final isLoading = ref.watch(financialTargetProvider).isLoading;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppTheme.backgroundColor,
       appBar: AppBar(
         title: Text(isEditing ? 'Edit Target' : 'New Target', style: const TextStyle(fontWeight: FontWeight.w700)),
         centerTitle: true,
         elevation: 0,
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black87,
+        backgroundColor: Colors.transparent,
       ),
       body: Form(
         key: _formKey,
@@ -134,32 +134,36 @@ class _CreateEditTargetScreenState extends ConsumerState<CreateEditTargetScreen>
           children: [
             TextFormField(
               controller: _nameController,
-              style: const TextStyle(color: Colors.black87),
+              style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
                 labelText: 'Target Name',
-                labelStyle: const TextStyle(color: Colors.black54),
+                labelStyle: const TextStyle(color: AppTheme.textSecondary),
                 hintText: 'e.g. Dream House, Emergency Fund',
-                hintStyle: const TextStyle(color: Colors.black38),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                prefixIcon: const Icon(Icons.track_changes, color: Colors.black54),
+                hintStyle: const TextStyle(color: Colors.grey),
+                filled: true,
+                fillColor: AppTheme.cardColor,
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+                prefixIcon: const Icon(Icons.track_changes, color: AppTheme.textSecondary),
               ),
               validator: (value) => value == null || value.isEmpty ? 'Please enter a name' : null,
             ),
             const SizedBox(height: 20),
             DropdownButtonFormField<String>(
               value: _selectedCategory,
-              style: const TextStyle(color: Colors.black87),
-              dropdownColor: Colors.white,
+              style: const TextStyle(color: Colors.white),
+              dropdownColor: AppTheme.cardColor,
               decoration: InputDecoration(
                 labelText: 'Category',
-                labelStyle: const TextStyle(color: Colors.black54),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                prefixIcon: const Icon(Icons.category, color: Colors.black54),
+                labelStyle: const TextStyle(color: AppTheme.textSecondary),
+                filled: true,
+                fillColor: AppTheme.cardColor,
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+                prefixIcon: const Icon(Icons.category, color: AppTheme.textSecondary),
               ),
               items: _categories.map((String category) {
                 return DropdownMenuItem<String>(
                   value: category,
-                  child: Text(category.toUpperCase()),
+                  child: Text(category.toUpperCase(), style: const TextStyle(color: Colors.white)),
                 );
               }).toList(),
               onChanged: (String? newValue) {
@@ -171,16 +175,18 @@ class _CreateEditTargetScreenState extends ConsumerState<CreateEditTargetScreen>
               controller: _targetAmountController,
               keyboardType: TextInputType.number,
               inputFormatters: [CurrencyInputFormatter()],
-              style: const TextStyle(color: Colors.black87),
+              style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
                 labelText: 'Target Amount (Rp)',
-                labelStyle: const TextStyle(color: Colors.black54),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                prefixIcon: const Icon(Icons.monetization_on, color: Colors.black54),
+                labelStyle: const TextStyle(color: AppTheme.textSecondary),
+                filled: true,
+                fillColor: AppTheme.cardColor,
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+                prefixIcon: const Icon(Icons.monetization_on, color: AppTheme.textSecondary),
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) return 'Please enter target amount';
-                final cleanValue = value.replaceAll('.', '');
+                final cleanValue = value.replaceAll(RegExp(r'[^0-9]'), '');
                 if (double.tryParse(cleanValue) == null) return 'Must be a valid number';
                 return null;
               },
@@ -191,12 +197,14 @@ class _CreateEditTargetScreenState extends ConsumerState<CreateEditTargetScreen>
                 controller: _currentAmountController,
                 keyboardType: TextInputType.number,
                 inputFormatters: [CurrencyInputFormatter()],
-                style: const TextStyle(color: Colors.black87),
+                style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
                   labelText: 'Initial Saved Amount (Rp) - Optional',
-                  labelStyle: const TextStyle(color: Colors.black54),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                  prefixIcon: const Icon(Icons.savings, color: Colors.black54),
+                  labelStyle: const TextStyle(color: AppTheme.textSecondary),
+                  filled: true,
+                  fillColor: AppTheme.cardColor,
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+                  prefixIcon: const Icon(Icons.savings, color: AppTheme.textSecondary),
                 ),
               ),
             if (!isEditing) const SizedBox(height: 20),
@@ -205,13 +213,15 @@ class _CreateEditTargetScreenState extends ConsumerState<CreateEditTargetScreen>
               child: InputDecorator(
                 decoration: InputDecoration(
                   labelText: 'Target Date',
-                  labelStyle: const TextStyle(color: Colors.black54),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                  prefixIcon: const Icon(Icons.calendar_today, color: Colors.black54),
+                  labelStyle: const TextStyle(color: AppTheme.textSecondary),
+                  filled: true,
+                  fillColor: AppTheme.cardColor,
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+                  prefixIcon: const Icon(Icons.calendar_today, color: AppTheme.textSecondary),
                 ),
                 child: Text(
                   _selectedDate == null ? 'Select a date' : DateFormat('dd MMM yyyy').format(_selectedDate!),
-                  style: const TextStyle(color: Colors.black87),
+                  style: const TextStyle(color: Colors.white),
                 ),
               ),
             ),
@@ -219,12 +229,14 @@ class _CreateEditTargetScreenState extends ConsumerState<CreateEditTargetScreen>
             TextFormField(
               controller: _descriptionController,
               maxLines: 3,
-              style: const TextStyle(color: Colors.black87),
+              style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
                 labelText: 'Description (Optional)',
-                labelStyle: const TextStyle(color: Colors.black54),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                prefixIcon: const Icon(Icons.notes, color: Colors.black54),
+                labelStyle: const TextStyle(color: AppTheme.textSecondary),
+                filled: true,
+                fillColor: AppTheme.cardColor,
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+                prefixIcon: const Icon(Icons.notes, color: AppTheme.textSecondary),
               ),
             ),
             const SizedBox(height: 32),
@@ -234,9 +246,13 @@ class _CreateEditTargetScreenState extends ConsumerState<CreateEditTargetScreen>
                 onPressed: isLoading ? null : _submitForm,
                 style: ElevatedButton.styleFrom(
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  backgroundColor: AppTheme.primaryColor,
+                  foregroundColor: Colors.white,
                 ),
                 child: isLoading
-                    ? const CircularProgressIndicator(color: Colors.white)
+                    ? const SizedBox(
+                        height: 20, width: 20,
+                        child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
                     : Text(isEditing ? 'Update Target' : 'Create Target', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               ),
             ),
@@ -246,3 +262,4 @@ class _CreateEditTargetScreenState extends ConsumerState<CreateEditTargetScreen>
     );
   }
 }
+

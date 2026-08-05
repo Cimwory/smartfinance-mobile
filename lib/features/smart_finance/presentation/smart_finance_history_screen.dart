@@ -423,23 +423,70 @@ class _SmartFinanceHistoryScreenState extends ConsumerState<SmartFinanceHistoryS
                       ),
                     ),
                     
-                    // Right Status Chip
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: statusColor.withOpacity(0.15),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: statusColor.withOpacity(0.4)),
-                      ),
-                      child: Text(
-                        item.calculated.healthStatus.toUpperCase(),
-                        style: TextStyle(
-                          color: statusColor,
-                          fontSize: 11,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 0.5,
+                    // Right Side: Status Chip & Delete Button
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: statusColor.withOpacity(0.15),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: statusColor.withOpacity(0.4)),
+                          ),
+                          child: Text(
+                            item.calculated.healthStatus.toUpperCase(),
+                            style: TextStyle(
+                              color: statusColor,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
                         ),
-                      ),
+                        const SizedBox(height: 8),
+                        InkWell(
+                          onTap: () async {
+                            final confirm = await _showDeleteConfirmDialog();
+                            if (confirm == true) {
+                              final success = await ref.read(smartFinanceProvider.notifier).deleteHistory(item.id);
+                              if (success && mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: const Text('Riwayat berhasil dihapus'),
+                                    backgroundColor: const Color(0xFF10B981),
+                                    behavior: SnackBarBehavior.floating,
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                  ),
+                                );
+                              } else if (mounted) {
+                                final error = ref.read(smartFinanceProvider).error;
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(error ?? 'Gagal menghapus'),
+                                    backgroundColor: const Color(0xFFEF4444),
+                                    behavior: SnackBarBehavior.floating,
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                  ),
+                                );
+                              }
+                            }
+                          },
+                          borderRadius: BorderRadius.circular(8),
+                          child: Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: const [
+                                Icon(Icons.delete_outline, color: Colors.redAccent, size: 16),
+                                SizedBox(width: 4),
+                                Text('Hapus', style: TextStyle(color: Colors.redAccent, fontSize: 12, fontWeight: FontWeight.bold)),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),

@@ -42,18 +42,18 @@ class SmartFinanceResult {
     return SmartFinanceResult(
       income: (json['income'] ?? 0).toDouble(),
       expenses: parsedExpenses,
-      totalDebt: (json['totalDebt'] ?? 0).toDouble(),
+      totalDebt: (json['total_debt'] ?? json['totalDebt'] ?? 0).toDouble(),
       saving: (json['saving'] ?? 0).toDouble(),
       investment: (json['investment'] ?? 0).toDouble(),
-      emergencyFund: (json['emergencyFund'] ?? 0).toDouble(),
-      totalExpenses: (json['totalExpenses'] ?? 0).toDouble(),
-      expenseRatio: (json['expenseRatio'] ?? 0).toDouble(),
-      savingRatio: (json['savingRatio'] ?? 0).toDouble(),
-      debtRatio: (json['debtRatio'] ?? 0).toDouble(),
-      emergencyMonths: (json['emergencyMonths'] ?? 0).toDouble(),
-      financialHealthScore: (json['financialHealthScore'] ?? 0).toDouble(),
-      healthStatus: json['healthStatus'] ?? 'Unknown',
-      statusColor: json['statusColor'] ?? 'secondary',
+      emergencyFund: (json['emergency_fund'] ?? json['emergencyFund'] ?? 0).toDouble(),
+      totalExpenses: (json['total_expenses'] ?? json['totalExpenses'] ?? 0).toDouble(),
+      expenseRatio: (json['expense_ratio'] ?? json['expenseRatio'] ?? 0).toDouble(),
+      savingRatio: (json['saving_ratio'] ?? json['savingRatio'] ?? 0).toDouble(),
+      debtRatio: (json['debt_ratio'] ?? json['debtRatio'] ?? 0).toDouble(),
+      emergencyMonths: (json['emergency_months'] ?? json['emergencyMonths'] ?? 0).toDouble(),
+      financialHealthScore: (json['financial_health_score'] ?? json['financialHealthScore'] ?? 0).toDouble(),
+      healthStatus: json['status'] ?? json['healthStatus'] ?? 'Unknown',
+      statusColor: json['status_class'] ?? json['statusColor'] ?? 'secondary',
     );
   }
 }

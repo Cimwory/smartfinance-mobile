@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/utils/currency_formatter.dart';
 import '../providers/smart_finance_provider.dart';
 import 'smart_finance_result_screen.dart';
 
@@ -17,6 +18,7 @@ class _SmartFinanceFormScreenState extends ConsumerState<SmartFinanceFormScreen>
   final _periodeController = TextEditingController();
   final _pemasukanController = TextEditingController();
   final _tabunganController = TextEditingController();
+  final _targetTabunganController = TextEditingController();
   final _investasiController = TextEditingController();
   final _danaDaruratController = TextEditingController();
   
@@ -67,6 +69,7 @@ class _SmartFinanceFormScreenState extends ConsumerState<SmartFinanceFormScreen>
         'periode': _periodeController.text,
         'pemasukan': _pemasukanController.text.replaceAll(RegExp(r'[^0-9]'), ''),
         'tabungan': _tabunganController.text.replaceAll(RegExp(r'[^0-9]'), ''),
+        'target_tabungan': _targetTabunganController.text.replaceAll(RegExp(r'[^0-9]'), ''),
         'investasi': _investasiController.text.replaceAll(RegExp(r'[^0-9]'), ''),
         'dana_darurat': _danaDaruratController.text.replaceAll(RegExp(r'[^0-9]'), ''),
         'expenses': formattedExpenses,
@@ -111,6 +114,8 @@ class _SmartFinanceFormScreenState extends ConsumerState<SmartFinanceFormScreen>
               _buildTextField(_pemasukanController, 'Total Pemasukan', TextInputType.number, prefix: 'Rp '),
               const SizedBox(height: 16),
               _buildTextField(_tabunganController, 'Tabungan Bulan Ini', TextInputType.number, prefix: 'Rp '),
+              const SizedBox(height: 16),
+              _buildTextField(_targetTabunganController, 'Target Tabungan', TextInputType.number, prefix: 'Rp '),
               const SizedBox(height: 16),
               _buildTextField(_investasiController, 'Investasi Bulan Ini', TextInputType.number, prefix: 'Rp '),
               const SizedBox(height: 16),
@@ -167,6 +172,7 @@ class _SmartFinanceFormScreenState extends ConsumerState<SmartFinanceFormScreen>
                                 controller: expense['amount'],
                                 style: const TextStyle(color: Colors.white),
                                 keyboardType: TextInputType.number,
+                                inputFormatters: [CurrencyInputFormatter()],
                                 decoration: const InputDecoration(
                                   labelText: 'Nominal',
                                   prefixText: 'Rp ',
@@ -234,6 +240,7 @@ class _SmartFinanceFormScreenState extends ConsumerState<SmartFinanceFormScreen>
       controller: controller,
       style: const TextStyle(color: Colors.white),
       keyboardType: type,
+      inputFormatters: type == TextInputType.number ? [CurrencyInputFormatter()] : null,
       decoration: InputDecoration(
         labelText: label,
         prefixText: prefix,
