@@ -74,6 +74,8 @@ flutter:
   assets:
     - assets/images/Loginbackground.jpg
     - assets/images/nexio_logo.png
+    - assets/images/nexio_logo_new.png
+    - assets/images/nexio_logo_trans.png
     - assets/images/backgroundfinance.jpg
     - assets/images/abstract_finance_bg.png
 
