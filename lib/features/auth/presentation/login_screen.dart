@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/app_theme.dart';
@@ -46,6 +48,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authProvider);
+    bool showGoogleSignIn = true;
+    if (!kIsWeb) {
+      if (Platform.isWindows) {
+        showGoogleSignIn = false;
+      }
+    }
 
     return Scaffold(
       body: Container(
@@ -156,58 +164,60 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 24),
-                  Row(
-                    children: [
-                      Expanded(child: Divider(color: AppTheme.textSecondary.withOpacity(0.3))),
-                      const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16),
-                        child: Text(
-                          'OR',
-                          style: TextStyle(color: AppTheme.textSecondary, fontSize: 12),
+                  if (showGoogleSignIn) ...[
+                    const SizedBox(height: 24),
+                    Row(
+                      children: [
+                        Expanded(child: Divider(color: AppTheme.textSecondary.withOpacity(0.3))),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16),
+                          child: Text(
+                            'OR',
+                            style: TextStyle(color: AppTheme.textSecondary, fontSize: 12),
+                          ),
                         ),
-                      ),
-                      Expanded(child: Divider(color: AppTheme.textSecondary.withOpacity(0.3))),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
-                  OutlinedButton.icon(
-                    onPressed: authState.isLoading ? null : () async {
-                      final success = await ref.read(authProvider.notifier).loginWithGoogle();
-                      if (success) {
-                        if (context.mounted) {
-                          final user = ref.read(authProvider).user;
-                          Navigator.of(context).pushAndRemoveUntil(
-                            MaterialPageRoute(builder: (_) => const HomeScreen()),
-                            (route) => false,
-                          );
-                        }
-                      } else {
-                        if (context.mounted) {
-                          final error = ref.read(authProvider).error;
-                          if (error != null) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(error), backgroundColor: Colors.red),
+                        Expanded(child: Divider(color: AppTheme.textSecondary.withOpacity(0.3))),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+                    OutlinedButton.icon(
+                      onPressed: authState.isLoading ? null : () async {
+                        final success = await ref.read(authProvider.notifier).loginWithGoogle();
+                        if (success) {
+                          if (context.mounted) {
+                            final user = ref.read(authProvider).user;
+                            Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(builder: (_) => const HomeScreen()),
+                              (route) => false,
                             );
                           }
+                        } else {
+                          if (context.mounted) {
+                            final error = ref.read(authProvider).error;
+                            if (error != null) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text(error), backgroundColor: Colors.red),
+                              );
+                            }
+                          }
                         }
-                      }
-                    },
-                    icon: Image.network(
-                      'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/120px-Google_%22G%22_logo.svg.png',
-                      height: 18,
-                      errorBuilder: (context, error, stackTrace) => const Icon(Icons.g_mobiledata, color: Colors.white),
-                    ),
-                    label: const Text('Sign in with Google'),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      side: const BorderSide(color: Color(0xFF334155)),
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                      },
+                      icon: Image.network(
+                        'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/120px-Google_%22G%22_logo.svg.png',
+                        height: 18,
+                        errorBuilder: (context, error, stackTrace) => const Icon(Icons.g_mobiledata, color: Colors.white),
+                      ),
+                      label: const Text('Sign in with Google'),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        side: const BorderSide(color: Color(0xFF334155)),
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                   const SizedBox(height: 32),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,

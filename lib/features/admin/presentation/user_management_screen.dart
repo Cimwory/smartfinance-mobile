@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/app_theme.dart';
+import '../providers/admin_users_provider.dart';
+import '../data/models/user_model.dart';
 import 'user_detail_screen.dart';
 
 class UserManagementScreen extends ConsumerStatefulWidget {
@@ -11,60 +13,11 @@ class UserManagementScreen extends ConsumerStatefulWidget {
 }
 
 class _UserManagementScreenState extends ConsumerState<UserManagementScreen> {
-  // Dummy data for UI showcase
-  final List<Map<String, dynamic>> _dummyUsers = [
-    {
-      'id': 1,
-      'name': 'John Doe',
-      'email': 'john.doe@example.com',
-      'role': 'admin',
-      'status': 'Active',
-      'avatar': null,
-    },
-    {
-      'id': 2,
-      'name': 'Jane Smith',
-      'email': 'jane.smith@example.com',
-      'role': 'user',
-      'status': 'Active',
-      'avatar': null,
-    },
-    {
-      'id': 3,
-      'name': 'Robert Johnson',
-      'email': 'robert.j@example.com',
-      'role': 'user',
-      'status': 'Inactive',
-      'avatar': null,
-    },
-    {
-      'id': 4,
-      'name': 'Emily Davis',
-      'email': 'emily.davis@example.com',
-      'role': 'user',
-      'status': 'Active',
-      'avatar': null,
-    },
-    {
-      'id': 5,
-      'name': 'Michael Wilson',
-      'email': 'm.wilson@example.com',
-      'role': 'user',
-      'status': 'Active',
-      'avatar': null,
-    },
-  ];
-
   String _searchQuery = '';
 
   @override
   Widget build(BuildContext context) {
-    final filteredUsers = _dummyUsers.where((user) {
-      final name = user['name'].toString().toLowerCase();
-      final email = user['email'].toString().toLowerCase();
-      final search = _searchQuery.toLowerCase();
-      return name.contains(search) || email.contains(search);
-    }).toList();
+    final usersAsync = ref.watch(adminUsersProvider);
 
     return Scaffold(
       backgroundColor: AppTheme.backgroundColor,
@@ -76,7 +29,6 @@ class _UserManagementScreenState extends ConsumerState<UserManagementScreen> {
           IconButton(
             icon: const Icon(Icons.add, color: AppTheme.primaryColor),
             onPressed: () {
-              // TODO: Implement Add User action
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Fitur Tambah User akan datang')),
               );
@@ -109,7 +61,7 @@ class _UserManagementScreenState extends ConsumerState<UserManagementScreen> {
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: const Color(0xFF1e293b)),
+                  borderSide: const BorderSide(color: Color(0xFF1e293b)),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -121,37 +73,53 @@ class _UserManagementScreenState extends ConsumerState<UserManagementScreen> {
           
           // User List
           Expanded(
-            child: filteredUsers.isEmpty
-                ? const Center(
+            child: usersAsync.when(
+              loading: () => const Center(child: CircularProgressIndicator(color: AppTheme.primaryColor)),
+              error: (err, stack) => Center(
+                child: Text(
+                  'Error: ${err.toString()}',
+                  style: const TextStyle(color: Colors.redAccent),
+                ),
+              ),
+              data: (users) {
+                final filteredUsers = users.where((user) {
+                  final name = user.name.toLowerCase();
+                  final email = user.email.toLowerCase();
+                  final search = _searchQuery.toLowerCase();
+                  return name.contains(search) || email.contains(search);
+                }).toList();
+
+                if (filteredUsers.isEmpty) {
+                  return const Center(
                     child: Text(
                       'Tidak ada user ditemukan.',
                       style: TextStyle(color: AppTheme.textSecondary),
                     ),
-                  )
-                : ListView.separated(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                    itemCount: filteredUsers.length,
-                    separatorBuilder: (context, index) => const SizedBox(height: 12),
-                    itemBuilder: (context, index) {
-                      final user = filteredUsers[index];
-                      return _buildUserCard(user);
-                    },
-                  ),
+                  );
+                }
+
+                return ListView.separated(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                  itemCount: filteredUsers.length,
+                  separatorBuilder: (context, index) => const SizedBox(height: 12),
+                  itemBuilder: (context, index) {
+                    final user = filteredUsers[index];
+                    return _buildUserCard(user);
+                  },
+                );
+              },
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildUserCard(Map<String, dynamic> user) {
-    final String name = user['name'];
-    final String email = user['email'];
-    final String role = user['role'];
-    final String status = user['status'];
-    final String initial = name.isNotEmpty ? name[0].toUpperCase() : '?';
+  Widget _buildUserCard(UserModel user) {
+    final String initial = user.name.isNotEmpty ? user.name[0].toUpperCase() : '?';
 
     Color roleColor;
-    if (role == 'admin') {
+    if (user.role == 'admin') {
       roleColor = Colors.redAccent;
     } else {
       roleColor = AppTheme.secondaryColor;
@@ -167,17 +135,12 @@ class _UserManagementScreenState extends ConsumerState<UserManagementScreen> {
         color: Colors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
-          onTap: () async {
-            final result = await Navigator.of(context).push(
+          onTap: () {
+            Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) => UserDetailScreen(user: user),
               ),
             );
-            if (result == true) {
-              setState(() {
-                _dummyUsers.removeWhere((u) => u['id'] == user['id']);
-              });
-            }
           },
           child: Padding(
             padding: const EdgeInsets.all(16.0),
@@ -187,14 +150,19 @@ class _UserManagementScreenState extends ConsumerState<UserManagementScreen> {
                 CircleAvatar(
                   radius: 28,
                   backgroundColor: AppTheme.primaryColor.withOpacity(0.2),
-                  child: Text(
-                    initial,
-                    style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: AppTheme.primaryColor,
-                    ),
-                  ),
+                  backgroundImage: user.avatar != null && user.avatar!.isNotEmpty
+                      ? NetworkImage(user.avatar!)
+                      : null,
+                  child: user.avatar == null || user.avatar!.isEmpty
+                      ? Text(
+                          initial,
+                          style: const TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: AppTheme.primaryColor,
+                          ),
+                        )
+                      : null,
                 ),
                 const SizedBox(width: 16),
                 
@@ -207,7 +175,7 @@ class _UserManagementScreenState extends ConsumerState<UserManagementScreen> {
                         children: [
                           Expanded(
                             child: Text(
-                              name,
+                              user.name,
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 16,
@@ -222,17 +190,17 @@ class _UserManagementScreenState extends ConsumerState<UserManagementScreen> {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                             decoration: BoxDecoration(
-                              color: status == 'Active' 
+                              color: user.status == 'Active' 
                                   ? Colors.green.withOpacity(0.2) 
                                   : Colors.grey.withOpacity(0.2),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Text(
-                              status,
+                              user.status,
                               style: TextStyle(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w600,
-                                color: status == 'Active' ? Colors.green : Colors.grey,
+                                color: user.status == 'Active' ? Colors.green : Colors.grey,
                               ),
                             ),
                           ),
@@ -240,7 +208,7 @@ class _UserManagementScreenState extends ConsumerState<UserManagementScreen> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        email,
+                        user.email,
                         style: const TextStyle(
                           color: AppTheme.textSecondary,
                           fontSize: 13,
@@ -258,7 +226,7 @@ class _UserManagementScreenState extends ConsumerState<UserManagementScreen> {
                           border: Border.all(color: roleColor.withOpacity(0.3)),
                         ),
                         child: Text(
-                          role.toUpperCase(),
+                          user.role.toUpperCase(),
                           style: TextStyle(
                             fontSize: 10,
                             fontWeight: FontWeight.bold,
@@ -288,7 +256,7 @@ class _UserManagementScreenState extends ConsumerState<UserManagementScreen> {
     );
   }
 
-  void _showUserActionBottomModal(Map<String, dynamic> user) {
+  void _showUserActionBottomModal(UserModel user) {
     showModalBottomSheet(
       context: context,
       backgroundColor: AppTheme.cardColor,
@@ -302,7 +270,7 @@ class _UserManagementScreenState extends ConsumerState<UserManagementScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'Aksi untuk ${user['name']}',
+                'Aksi untuk ${user.name}',
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 18,
@@ -314,18 +282,13 @@ class _UserManagementScreenState extends ConsumerState<UserManagementScreen> {
                 icon: Icons.person_outline,
                 title: 'Lihat Detail User',
                 color: Colors.white,
-                onTap: () async {
+                onTap: () {
                   Navigator.pop(context);
-                  final result = await Navigator.of(context).push(
+                  Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => UserDetailScreen(user: user),
                     ),
                   );
-                  if (result == true) {
-                    setState(() {
-                      _dummyUsers.removeWhere((u) => u['id'] == user['id']);
-                    });
-                  }
                 },
               ),
               const Divider(color: Color(0xFF1e293b), height: 1),
@@ -335,7 +298,9 @@ class _UserManagementScreenState extends ConsumerState<UserManagementScreen> {
                 color: Colors.white,
                 onTap: () {
                   Navigator.pop(context);
-                  // TODO: Edit user implementation
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Fitur Edit User belum tersedia')),
+                  );
                 },
               ),
               const Divider(color: Color(0xFF1e293b), height: 1),
@@ -350,12 +315,17 @@ class _UserManagementScreenState extends ConsumerState<UserManagementScreen> {
               ),
               const Divider(color: Color(0xFF1e293b), height: 1),
               _buildModalAction(
-                icon: Icons.block_outlined,
-                title: user['status'] == 'Active' ? 'Nonaktifkan User' : 'Aktifkan User',
+                icon: user.status == 'Active' ? Icons.block_outlined : Icons.check_circle_outline,
+                title: user.status == 'Active' ? 'Nonaktifkan User' : 'Aktifkan User',
                 color: Colors.orangeAccent,
-                onTap: () {
+                onTap: () async {
                   Navigator.pop(context);
-                  // TODO: Toggle status implementation
+                  final success = await ref.read(adminUsersProvider.notifier).toggleStatus(user.id);
+                  if (mounted && success) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Status user ${user.name} berhasil diubah')),
+                    );
+                  }
                 },
               ),
               const Divider(color: Color(0xFF1e293b), height: 1),
@@ -391,8 +361,8 @@ class _UserManagementScreenState extends ConsumerState<UserManagementScreen> {
     );
   }
 
-  void _showChangeRoleDialog(Map<String, dynamic> user) {
-    String selectedRole = user['role'];
+  void _showChangeRoleDialog(UserModel user) {
+    String selectedRole = user.role;
     final roles = ['admin', 'user'];
 
     showDialog(
@@ -430,18 +400,20 @@ class _UserManagementScreenState extends ConsumerState<UserManagementScreen> {
                   child: const Text('Batal', style: TextStyle(color: AppTheme.textSecondary)),
                 ),
                 TextButton(
-                  onPressed: () {
-                    // Update the state
-                    setState(() {
-                      final index = _dummyUsers.indexWhere((u) => u['id'] == user['id']);
-                      if (index != -1) {
-                        _dummyUsers[index]['role'] = selectedRole;
-                      }
-                    });
+                  onPressed: () async {
                     Navigator.of(ctx).pop();
-                    ScaffoldMessenger.of(this.context).showSnackBar(
-                      SnackBar(content: Text('Role berhasil diubah menjadi ${selectedRole.toUpperCase()}')),
-                    );
+                    if (selectedRole != user.role) {
+                      final success = await ref.read(adminUsersProvider.notifier).updateRole(user.id, selectedRole);
+                      if (mounted && success) {
+                        ScaffoldMessenger.of(this.context).showSnackBar(
+                          SnackBar(content: Text('Role berhasil diubah menjadi ${selectedRole.toUpperCase()}')),
+                        );
+                      } else if (mounted) {
+                        ScaffoldMessenger.of(this.context).showSnackBar(
+                          const SnackBar(content: Text('Gagal mengubah role. Mungkin Anda tidak bisa mengubah role Anda sendiri.')),
+                        );
+                      }
+                    }
                   },
                   child: const Text('Simpan', style: TextStyle(color: AppTheme.primaryColor)),
                 ),
@@ -453,27 +425,31 @@ class _UserManagementScreenState extends ConsumerState<UserManagementScreen> {
     );
   }
 
-  void _showDeleteConfirmationDialog(Map<String, dynamic> user) {
+  void _showDeleteConfirmationDialog(UserModel user) {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: AppTheme.cardColor,
         title: const Text('Hapus User', style: TextStyle(color: Colors.white)),
-        content: Text('Apakah Anda yakin ingin menghapus user ${user['name']}?', style: const TextStyle(color: AppTheme.textSecondary)),
+        content: Text('Apakah Anda yakin ingin menghapus user ${user.name}?', style: const TextStyle(color: AppTheme.textSecondary)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
             child: const Text('Batal', style: TextStyle(color: AppTheme.textSecondary)),
           ),
           TextButton(
-            onPressed: () {
-              setState(() {
-                _dummyUsers.removeWhere((u) => u['id'] == user['id']);
-              });
+            onPressed: () async {
               Navigator.of(ctx).pop();
-              ScaffoldMessenger.of(this.context).showSnackBar(
-                SnackBar(content: Text('User ${user['name']} berhasil dihapus')),
-              );
+              final success = await ref.read(adminUsersProvider.notifier).deleteUser(user.id);
+              if (mounted && success) {
+                ScaffoldMessenger.of(this.context).showSnackBar(
+                  SnackBar(content: Text('User ${user.name} berhasil dihapus')),
+                );
+              } else if (mounted) {
+                ScaffoldMessenger.of(this.context).showSnackBar(
+                  const SnackBar(content: Text('Gagal menghapus user.')),
+                );
+              }
             },
             child: const Text('Hapus', style: TextStyle(color: Colors.redAccent)),
           ),
@@ -482,4 +458,3 @@ class _UserManagementScreenState extends ConsumerState<UserManagementScreen> {
     );
   }
 }
-

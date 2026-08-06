@@ -31,8 +31,43 @@ class _EditProfileDialogState extends ConsumerState<EditProfileDialog> {
     super.dispose();
   }
 
-  Future<void> _pickImage() async {
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+  Future<void> _showImageSourceActionSheet() async {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppTheme.cardColor,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (BuildContext context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              ListTile(
+                leading: const Icon(Icons.camera_alt, color: Colors.white),
+                title: const Text('Kamera', style: TextStyle(color: Colors.white)),
+                onTap: () {
+                  Navigator.pop(context);
+                  _pickImage(ImageSource.camera);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.photo_library, color: Colors.white),
+                title: const Text('Galeri', style: TextStyle(color: Colors.white)),
+                onTap: () {
+                  Navigator.pop(context);
+                  _pickImage(ImageSource.gallery);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _pickImage(ImageSource source) async {
+    final XFile? image = await _picker.pickImage(source: source, imageQuality: 80);
     if (image != null) {
       setState(() {
         _selectedImage = File(image.path);
@@ -84,7 +119,7 @@ class _EditProfileDialogState extends ConsumerState<EditProfileDialog> {
             ),
             const SizedBox(height: 24),
             GestureDetector(
-              onTap: _pickImage,
+              onTap: _showImageSourceActionSheet,
               child: Stack(
                 alignment: Alignment.bottomRight,
                 children: [
