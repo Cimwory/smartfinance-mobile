@@ -242,9 +242,20 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       style: TextStyle(color: AppTheme.textSecondary, fontSize: 10, fontWeight: FontWeight.bold),
                     ),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
+                    Wrap(
+                      alignment: WrapAlignment.spaceEvenly,
+                      spacing: 8.0,
+                      children: [
+                      TextButton.icon(
+                        onPressed: () {
+                          Navigator.of(context).pushAndRemoveUntil(
+                            MaterialPageRoute(builder: (_) => const HomeScreen()),
+                            (route) => false,
+                          );
+                        },
+                        icon: const Icon(Icons.person, size: 16, color: Colors.greenAccent),
+                        label: const Text('Go to User', style: TextStyle(color: Colors.greenAccent, fontSize: 12)),
+                      ),
                       TextButton.icon(
                         onPressed: () {
                           showDialog(

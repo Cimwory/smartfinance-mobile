@@ -5,15 +5,8 @@ class ApiConstants {
   // For physical devices or other emulators, replace with your local IP (e.g. 192.168.x.x)
   // For Windows/Desktop, use 127.0.0.1
   static String get baseUrl {
-    try {
-      if (Platform.isAndroid) {
-        return 'http://10.0.2.2:8000/api/';
-      } else {
-        return 'http://127.0.0.1:8000/api/';
-      }
-    } catch (e) {
-      return 'http://127.0.0.1:8000/api/';
-    }
+    // Digunakan IP Wi-Fi Laptop agar bisa diakses dari HP fisik di jaringan yang sama
+    return 'http://10.14.20.250:8000/api/';
   }
   
   static const String login = 'login';
