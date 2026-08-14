@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../auth/presentation/login_screen.dart';
 import '../../smart_finance/presentation/smart_finance_history_screen.dart';
@@ -9,211 +10,399 @@ import '../../tax/presentation/tax_history_screen.dart';
 import '../../stata/presentation/stata_screen.dart';
 import '../../profile/presentation/profile_screen.dart';
 
-class HomeScreen extends ConsumerWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderStateMixin {
+  late AnimationController _entranceController;
+  late AnimationController _blobController;
+  
+  late Animation<double> _fadeAnimation;
+  late Animation<Offset> _slideAnimation;
+  late Animation<double> _blobAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    
+    // Entrance animations (slide up + fade in)
+    _entranceController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    );
+    
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _entranceController, curve: Curves.easeOutCubic),
+    );
+    
+    _slideAnimation = Tween<Offset>(begin: const Offset(0, 0.1), end: Offset.zero).animate(
+      CurvedAnimation(parent: _entranceController, curve: Curves.easeOutCubic),
+    );
+
+    // Ambient blob animations
+    _blobController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 15),
+    )..repeat(reverse: true);
+    
+    _blobAnimation = Tween<double>(begin: 0.8, end: 1.2).animate(
+      CurvedAnimation(parent: _blobController, curve: Curves.easeInOutSine),
+    );
+
+    _entranceController.forward();
+  }
+
+  @override
+  void dispose() {
+    _entranceController.dispose();
+    _blobController.dispose();
+    super.dispose();
+  }
+
+  void _handleLogout(BuildContext context, WidgetRef ref) async {
+    await ref.read(authProvider.notifier).logout();
+    if (context.mounted) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => const LoginScreen()),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final user = ref.watch(authProvider).user;
     final name = user?['name'] ?? 'Pengguna';
 
     return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout, color: Colors.white),
-            tooltip: 'Logout',
-            onPressed: () async {
-              await ref.read(authProvider.notifier).logout();
-              if (context.mounted) {
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (_) => const LoginScreen()),
-                );
-              }
-            },
-          )
-        ],
-      ),
+      backgroundColor: const Color(0xFF121414), // surface / background
       body: Stack(
         children: [
-          // Background Image
-          Positioned.fill(
-            child: Image.asset(
-              'assets/images/backgroundfinance.jpg',
-              fit: BoxFit.cover,
-            ),
-          ),
-          // Gradient Overlay
-          Positioned.fill(
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    const Color(0xFF070B14).withOpacity(0.8),
-                    const Color(0xFF070B14).withOpacity(0.98),
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-              ),
-            ),
-          ),
-          // Content
-          Center(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(24),
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-                  child: Container(
-                    padding: const EdgeInsets.all(32),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF070A13).withOpacity(0.85),
-                      borderRadius: BorderRadius.circular(24),
-                      border: Border.all(color: Colors.white.withOpacity(0.1)),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.6),
-                          blurRadius: 90,
-                          offset: const Offset(0, 30),
+          // Animated Background Blobs (Circuit-bg simulation & radial gradients)
+          AnimatedBuilder(
+            animation: _blobAnimation,
+            builder: (context, child) {
+              return Stack(
+                children: [
+                  Positioned(
+                    top: -100,
+                    left: -100,
+                    child: Transform.scale(
+                      scale: _blobAnimation.value,
+                      child: Container(
+                        width: 400,
+                        height: 400,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: const Color(0xFF00e5ff).withOpacity(0.08),
                         ),
-                      ],
+                      ),
                     ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'BERANDA UTAMA',
-                          style: TextStyle(
-                            color: Color(0xFF818CF8),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: 1.5,
+                  ),
+                  Positioned(
+                    bottom: -100,
+                    right: -100,
+                    child: Transform.scale(
+                      scale: 2.0 - _blobAnimation.value,
+                      child: Container(
+                        width: 500,
+                        height: 500,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: const Color(0xFF9cf0ff).withOpacity(0.05),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+          
+          // Main Content
+          SafeArea(
+            child: FadeTransition(
+              opacity: _fadeAnimation,
+              child: SlideTransition(
+                position: _slideAnimation,
+                child: Column(
+                  children: [
+                    // Top AppBar Custom
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.logout, color: Color(0xFFbac9cc)),
+                            onPressed: () => _handleLogout(context, ref),
                           ),
-                        ),
-                        const SizedBox(height: 12),
-                        Text(
-                          'Halo, $name!',
-                          style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 32,
-                                height: 1.2,
-                              ),
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          'Selamat datang di Nexio Mobile. Silakan pilih layanan yang ingin Anda gunakan hari ini.',
-                          style: TextStyle(
-                            color: Colors.white.withOpacity(0.72),
-                            fontSize: 16,
-                            height: 1.7,
+                          Text(
+                            'NEXIO',
+                            style: GoogleFonts.sora(
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold,
+                              color: const Color(0xFF9cf0ff), // primary-fixed
+                              letterSpacing: -0.56,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 32),
-                        Wrap(
-                          spacing: 12,
-                          runSpacing: 12,
+                          IconButton(
+                            icon: const Icon(Icons.account_circle, color: Color(0xFFbac9cc)),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (_) => const ProfileScreen()),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    
+                    // Scrollable Content
+                    Expanded(
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (_) => const SmartFinanceHistoryScreen()),
-                                );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF14B8A6), // Teal color
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                                textStyle: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
+                            // Hero Section
+                            Container(
+                              padding: const EdgeInsets.all(24),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.03), // glass-panel
+                                borderRadius: BorderRadius.circular(24),
+                                border: Border.all(color: Colors.white.withOpacity(0.05)),
                               ),
-                              child: const Text('Smart Finance'),
-                            ),
-                            ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (_) => const FinancialTargetsScreen()),
-                                );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFFF59E0B), // Amber color
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                                textStyle: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
+                              child: Stack(
+                                children: [
+                                  // Subtle gradient corner
+                                  Positioned(
+                                    top: -20,
+                                    left: -20,
+                                    child: Container(
+                                      width: 100,
+                                      height: 100,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: const Color(0xFF00e5ff).withOpacity(0.1),
+                                      ),
+                                    ),
+                                  ),
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(24),
+                                    child: BackdropFilter(
+                                      filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'BERANDA UTAMA',
+                                            style: GoogleFonts.getFont(
+                                              'JetBrains Mono',
+                                              color: const Color(0xFFbac9cc), // on-surface-variant
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w500,
+                                              letterSpacing: 0.6,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 12),
+                                          Text(
+                                            'Halo, $name!',
+                                            style: GoogleFonts.sora(
+                                              color: const Color(0xFF9cf0ff), // primary-fixed
+                                              fontSize: 28,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Text(
+                                            'Selamat datang di Nexio Mobile. Silakan pilih layanan yang ingin Anda gunakan hari ini.',
+                                            style: GoogleFonts.hankenGrotesk(
+                                              color: const Color(0xFFbac9cc),
+                                              fontSize: 16,
+                                              height: 1.5,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
-                              child: const Text('Financial Targets'),
                             ),
-                            ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(
+                            const SizedBox(height: 32),
+                            
+                            // Action Grid
+                            GridView.count(
+                              physics: const NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              crossAxisCount: 2,
+                              crossAxisSpacing: 16,
+                              mainAxisSpacing: 16,
+                              childAspectRatio: 0.85, // Adjust slightly to fit content nicely
+                              children: [
+                                _buildServiceCard(
                                   context,
-                                  MaterialPageRoute(builder: (_) => const TaxHistoryScreen()),
-                                );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF10B981), // Emerald color
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                                textStyle: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
-                              ),
-                              child: const Text('Perpajakan'),
-                            ),
-                            ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(
+                                  title: 'Smart Finance',
+                                  subtitle: 'Automated wealth management',
+                                  icon: Icons.bar_chart,
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (_) => const SmartFinanceHistoryScreen()),
+                                    );
+                                  },
+                                ),
+                                _buildServiceCard(
                                   context,
-                                  MaterialPageRoute(builder: (_) => const StataScreen()),
-                                );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF2563EB), // Blue color
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                                textStyle: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
-                              ),
-                              child: const Text('Stata Analytics'),
+                                  title: 'Financial Targets',
+                                  subtitle: 'Goal-oriented planning',
+                                  icon: Icons.track_changes,
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (_) => const FinancialTargetsScreen()),
+                                    );
+                                  },
+                                ),
+                                _buildServiceCard(
+                                  context,
+                                  title: 'Perpajakan',
+                                  subtitle: 'Tax filing & optimization',
+                                  icon: Icons.receipt_long,
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (_) => const TaxHistoryScreen()),
+                                    );
+                                  },
+                                ),
+                                _buildServiceCard(
+                                  context,
+                                  title: 'Stata Analytics',
+                                  subtitle: 'Deep market insights',
+                                  icon: Icons.analytics,
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (_) => const StataScreen()),
+                                    );
+                                  },
+                                ),
+                              ],
                             ),
-                            ElevatedButton(
-                              onPressed: () {
+                            const SizedBox(height: 32),
+                            
+                            // Secondary Action (Lihat Profile)
+                            InkWell(
+                              onTap: () {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(builder: (_) => const ProfileScreen()),
                                 );
                               },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white.withOpacity(0.1),
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30),
-                                  side: BorderSide(color: Colors.white.withOpacity(0.2)),
+                              borderRadius: BorderRadius.circular(9999),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.03),
+                                  borderRadius: BorderRadius.circular(9999),
+                                  border: Border.all(color: Colors.white.withOpacity(0.05)),
                                 ),
-                                elevation: 0,
-                                textStyle: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const Icon(Icons.person, color: Color(0xFFe3e2e2), size: 20),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      'Lihat Profile',
+                                      style: GoogleFonts.sora(
+                                        color: const Color(0xFFe3e2e2),
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                              child: const Text('Lihat Profile'),
                             ),
+                            const SizedBox(height: 48), // Padding bottom
                           ],
                         ),
-                      ],
+                      ),
                     ),
-                  ),
+                  ],
                 ),
               ),
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildServiceCard(
+    BuildContext context, {
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(24),
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.03), // glass-panel
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: Colors.white.withOpacity(0.05)), // glass border
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Icon Circle
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF00e5ff).withOpacity(0.1), // bg-primary-container/10
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(icon, color: const Color(0xFF00e5ff), size: 24),
+              ),
+              const Spacer(),
+              // Title
+              Text(
+                title,
+                style: GoogleFonts.sora(
+                  color: const Color(0xFFe3e2e2),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  height: 1.2,
+                ),
+              ),
+              const SizedBox(height: 8),
+              // Subtitle
+              Text(
+                subtitle,
+                style: GoogleFonts.hankenGrotesk(
+                  color: const Color(0xFFbac9cc),
+                  fontSize: 12,
+                  letterSpacing: 0.5,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

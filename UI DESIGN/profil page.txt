@@ -1,0 +1,309 @@
+<!DOCTYPE html><html class="dark" lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Nexio Profile</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&amp;family=JetBrains+Mono:wght@500&amp;family=Hanken+Grotesk:wght@400&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#c3f5ff",
+                        "surface": "#121414",
+                        "surface-container-highest": "#343535",
+                        "surface-variant": "#343535",
+                        "inverse-on-surface": "#2f3131",
+                        "surface-container-lowest": "#0d0e0f",
+                        "primary-container": "#00e5ff",
+                        "surface-container-low": "#1a1c1c",
+                        "error-container": "#93000a",
+                        "on-tertiary-container": "#54596a",
+                        "on-primary": "#00363d",
+                        "on-secondary-container": "#b5b8c9",
+                        "surface-dim": "#121414",
+                        "tertiary-fixed": "#dee2f7",
+                        "on-secondary-fixed": "#171b28",
+                        "secondary-container": "#454957",
+                        "inverse-primary": "#006875",
+                        "on-surface": "#e3e2e2",
+                        "on-primary-fixed": "#001f24",
+                        "secondary-fixed-dim": "#c3c6d7",
+                        "surface-tint": "#00daf3",
+                        "surface-container-high": "#292a2a",
+                        "on-tertiary-fixed": "#161b2a",
+                        "tertiary-fixed-dim": "#c1c6da",
+                        "on-surface-variant": "#bac9cc",
+                        "on-tertiary-fixed-variant": "#414657",
+                        "on-secondary-fixed-variant": "#434654",
+                        "on-primary-container": "#00626e",
+                        "on-error": "#690005",
+                        "surface-container": "#1e2020",
+                        "tertiary": "#e9ecff",
+                        "primary-fixed": "#9cf0ff",
+                        "secondary": "#c3c6d7",
+                        "outline": "#849396",
+                        "tertiary-container": "#ccd0e4",
+                        "on-background": "#e3e2e2",
+                        "on-secondary": "#2c303d",
+                        "primary-fixed-dim": "#00daf3",
+                        "inverse-surface": "#e3e2e2",
+                        "outline-variant": "#3b494c",
+                        "on-tertiary": "#2b3040",
+                        "secondary-fixed": "#dfe2f3",
+                        "background": "#121414",
+                        "on-error-container": "#ffdad6",
+                        "surface-bright": "#38393a",
+                        "error": "#ffb4ab",
+                        "on-primary-fixed-variant": "#004f58"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "16px",
+                        "base": "8px",
+                        "xl": "48px",
+                        "xs": "4px",
+                        "lg": "32px",
+                        "md": "20px",
+                        "sm": "12px",
+                        "container-padding": "24px"
+                    },
+                    "fontFamily": {
+                        "button-text": ["Sora"],
+                        "headline-lg": ["Sora"],
+                        "label-mono": ["JetBrains Mono"],
+                        "display-lg": ["Sora"],
+                        "body-md": ["Hanken Grotesk"],
+                        "headline-lg-mobile": ["Sora"]
+                    },
+                    "fontSize": {
+                        "button-text": ["16px", {"lineHeight": "20px", "fontWeight": "600"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "label-mono": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "600"}]
+                    },
+                    "animation": {
+                        "ambient-pulse": "ambientPulse 15s ease-in-out infinite alternate",
+                        "fade-in-up": "fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards",
+                        "icon-glow": "iconGlow 3s ease-in-out infinite alternate",
+                        "modal-enter": "modalEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards",
+                        "modal-leave": "modalLeave 0.3s ease-in forwards"
+                    },
+                    "keyframes": {
+                        ambientPulse: {
+                            "0%": { opacity: 0.3, transform: "scale(1)" },
+                            "100%": { opacity: 0.7, transform: "scale(1.2) translate(-20px, 20px)" }
+                        },
+                        fadeInUp: {
+                            "0%": { opacity: 0, transform: "translateY(20px)" },
+                            "100%": { opacity: 1, transform: "translateY(0)" }
+                        },
+                        iconGlow: {
+                            "0%": { textShadow: "0 0 5px rgba(0, 229, 255, 0.3)" },
+                            "100%": { textShadow: "0 0 15px rgba(0, 229, 255, 0.8)" }
+                        },
+                        modalEnter: {
+                            "0%": { opacity: 0, transform: "scale(0.95) translateY(10px)" },
+                            "100%": { opacity: 1, transform: "scale(1) translateY(0)" }
+                        },
+                        modalLeave: {
+                            "0%": { opacity: 1, transform: "scale(1) translateY(0)" },
+                            "100%": { opacity: 0, transform: "scale(0.95) translateY(10px)" }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .icon-fill {
+            font-variation-settings: 'FILL' 1;
+        }
+        
+        /* Future Wealth Ambient Background */
+        .bg-mesh {
+            background-color: #121414;
+        }
+
+        /* Avatar Neon Glow */
+        .avatar-glow {
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.15), inset 0 0 15px rgba(0, 229, 255, 0.1);
+        }
+
+        /* Glassmorphism Borders */
+        .glass-border {
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .ambient-blob-1 {
+            background: radial-gradient(circle, rgba(0,229,255,0.1) 0%, rgba(18,20,20,0) 70%);
+        }
+        .ambient-blob-2 {
+            background: radial-gradient(circle, rgba(195,245,255,0.08) 0%, rgba(18,20,20,0) 70%);
+        }
+    </style>
+<style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+<body class="bg-mesh min-h-screen text-on-surface antialiased flex justify-center overflow-x-hidden relative">
+<!-- Ambient Background Animations -->
+<div class="fixed top-[10%] left-[-10%] w-[80vw] h-[80vw] rounded-full ambient-blob-1 animate-ambient-pulse pointer-events-none z-0"></div>
+<div class="fixed bottom-[-10%] right-[-10%] w-[60vw] h-[60vw] rounded-full ambient-blob-2 animate-ambient-pulse pointer-events-none z-0" style="animation-delay: -5s;"></div>
+<!-- Mobile Container Wrapper -->
+<div class="w-full max-w-md bg-surface-container-lowest/50 relative flex flex-col min-h-screen z-10 backdrop-blur-[2px]">
+<!-- Top App Bar (Task-Focused Sub-page variant) -->
+<header class="flex justify-between items-center px-container-padding py-md w-full z-50 backdrop-blur-md bg-background/10 opacity-0 animate-fade-in-up" style="animation-delay: 0.1s;">
+<button aria-label="Back" class="w-10 h-10 flex items-center justify-start text-on-surface hover:text-primary transition-colors hover:scale-110 active:scale-95 duration-300">
+<span class="material-symbols-outlined text-[24px] animate-icon-glow">arrow_back</span>
+</button>
+<h1 class="font-button-text text-button-text text-on-surface">Profil Saya</h1>
+<button aria-label="Edit Profile" class="w-10 h-10 flex items-center justify-end text-surface-tint hover:text-primary transition-colors hover:scale-110 active:scale-95 duration-300" id="openEditModalBtn">
+<span class="material-symbols-outlined text-[20px] icon-fill animate-icon-glow">edit</span>
+</button>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 px-container-padding flex flex-col pt-sm pb-xl">
+<!-- Avatar Section -->
+<section class="flex flex-col items-center justify-center mt-sm mb-lg opacity-0 animate-fade-in-up" style="animation-delay: 0.2s;">
+<div class="w-24 h-24 rounded-full bg-surface-container-high border-2 border-primary-container/80 flex items-center justify-center avatar-glow mb-sm transition-all duration-300 hover:shadow-[0_0_30px_rgba(0,229,255,0.3)] hover:scale-105 cursor-pointer relative">
+<span class="font-display-lg text-display-lg text-primary-container drop-shadow-[0_0_8px_rgba(0,229,255,0.5)]">U</span>
+<div class="absolute bottom-0 right-0 w-8 h-8 bg-primary-container rounded-full flex items-center justify-center shadow-lg border-2 border-surface"><span class="material-symbols-outlined text-on-primary text-[18px]">photo_camera</span></div></div>
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface text-center mt-xs">Unknown User</h2>
+<div class="mt-sm bg-primary-container/10 border border-primary-container/20 rounded-full px-sm py-[2px] shadow-[0_0_10px_rgba(0,229,255,0.1)] transition-colors duration-300 hover:bg-primary-container/20">
+<span class="font-label-mono text-label-mono text-surface-tint">USER</span>
+</div>
+</section>
+<!-- Account Details -->
+<section class="flex flex-col gap-sm mb-lg opacity-0 animate-fade-in-up" style="animation-delay: 0.3s;">
+<!-- Email Card -->
+<div class="bg-surface-container-low/40 backdrop-blur-xl glass-border rounded-xl p-sm flex items-center justify-between shadow-lg shadow-black/20 transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(0,229,255,0.1)] hover:border-primary/30 active:scale-[0.98] cursor-pointer group">
+<div class="flex items-center gap-sm">
+<div class="w-12 h-12 bg-surface-container/80 rounded-lg flex items-center justify-center glass-border transition-colors duration-300 group-hover:bg-primary/10">
+<span class="material-symbols-outlined text-on-surface-variant transition-colors duration-300 group-hover:text-primary animate-icon-glow">mail</span>
+</div>
+<div class="flex flex-col justify-center">
+<span class="font-label-mono text-label-mono text-on-surface-variant mb-xs transition-colors duration-300 group-hover:text-on-surface">Email</span>
+<span class="font-button-text text-button-text text-on-surface">No email provided</span>
+</div>
+</div>
+<button class="font-button-text text-button-text text-surface-tint hover:text-primary-container transition-colors pr-xs">
+                        Ubah
+                    </button>
+</div>
+<!-- Username Card -->
+<div class="bg-surface-container-low/40 backdrop-blur-xl glass-border rounded-xl p-sm flex items-center justify-between shadow-lg shadow-black/20 transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(0,229,255,0.1)] hover:border-primary/30 active:scale-[0.98] cursor-pointer group">
+<div class="flex items-center gap-sm">
+<div class="w-12 h-12 bg-surface-container/80 rounded-lg flex items-center justify-center glass-border transition-colors duration-300 group-hover:bg-primary/10">
+<span class="material-symbols-outlined text-on-surface-variant transition-colors duration-300 group-hover:text-primary animate-icon-glow">person</span>
+</div>
+<div class="flex flex-col justify-center">
+<span class="font-label-mono text-label-mono text-on-surface-variant mb-xs transition-colors duration-300 group-hover:text-on-surface">Username</span>
+<span class="font-button-text text-button-text text-on-surface">-</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Action Buttons -->
+<section class="flex flex-col gap-sm mt-auto opacity-0 animate-fade-in-up" style="animation-delay: 0.4s;">
+<!-- Change Password -->
+<button class="w-full flex items-center justify-center gap-xs py-sm rounded-full bg-surface-container-low/30 backdrop-blur-md border border-on-surface-variant/30 text-on-surface transition-all duration-300 hover:bg-surface-container-low/60 hover:border-surface-tint/50 hover:scale-[1.02] hover:shadow-[0_0_15px_rgba(0,229,255,0.15)] active:scale-[0.98] group">
+<span class="material-symbols-outlined text-[20px] transition-colors duration-300 group-hover:text-surface-tint animate-icon-glow">lock</span>
+<span class="font-button-text text-button-text">Ubah Password</span>
+</button>
+<!-- Logout -->
+<button class="w-full flex items-center justify-center gap-xs py-sm rounded-full bg-error-container/10 backdrop-blur-md border border-error/30 text-error mt-xs transition-all duration-300 hover:bg-error-container/30 hover:border-error/60 hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(255,180,171,0.2)] active:scale-[0.98] group">
+<span class="material-symbols-outlined text-[20px] group-hover:animate-pulse">logout</span>
+<span class="font-button-text text-button-text">Keluar</span>
+</button>
+</section>
+</main>
+</div>
+<!-- Edit Profile Modal -->
+<div class="fixed inset-0 z-[100] hidden items-center justify-center p-4" id="editProfileModal">
+<!-- Backdrop -->
+<div class="absolute inset-0 bg-background/80 backdrop-blur-md transition-opacity duration-300 opacity-0" id="modalBackdrop"></div>
+<!-- Modal Content -->
+<div class="relative w-full max-w-[90%] bg-surface-container/80 backdrop-blur-xl border border-primary-container/20 rounded-lg p-container-padding shadow-2xl flex flex-col gap-md opacity-0 scale-95 transition-all duration-300" id="modalContent">
+<!-- Header -->
+<div class="flex justify-center items-center mb-sm"><h3 class="font-button-text text-[24px] font-bold text-on-surface">Edit Profil</h3></div>
+<!-- Scrollable Form Area -->
+<div class="flex flex-col gap-md overflow-y-auto max-h-[60vh] pr-2 custom-scrollbar"><div class="flex flex-col gap-xs mt-md"><label class="font-button-text text-on-surface text-[14px]">Username</label><input class="w-full bg-surface-container-low/40 border border-on-surface-variant/30 rounded-full px-4 py-2 text-on-surface font-body-md focus:border-primary-container focus:ring-0 outline-none transition-all" type="text" value=""></div></div>
+<!-- Action Buttons -->
+<div class="flex items-center justify-end gap-lg mt-lg"><button class="text-on-surface-variant font-button-text hover:text-on-surface transition-colors rounded-full" id="cancelModalBtn">Batal</button><button class="px-lg py-sm rounded-full bg-primary-container text-on-primary font-button-text shadow-[0_0_20px_rgba(0,229,255,0.3)] hover:scale-105 transition-all active:scale-95">Simpan</button></div>
+</div>
+</div>
+<style>
+    /* Custom Scrollbar for modal */
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.02);
+        border-radius: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: rgba(0, 229, 255, 0.2);
+        border-radius: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: rgba(0, 229, 255, 0.4);
+    }
+</style>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const modal = document.getElementById('editProfileModal');
+        const modalBackdrop = document.getElementById('modalBackdrop');
+        const modalContent = document.getElementById('modalContent');
+        const openBtn = document.getElementById('openEditModalBtn');
+        const closeBtn = document.getElementById('closeModalBtn');
+        const cancelBtn = document.getElementById('cancelModalBtn');
+
+        function openModal() {
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            
+            // Trigger reflow
+            void modal.offsetWidth;
+            
+            modalBackdrop.classList.remove('opacity-0');
+            modalBackdrop.classList.add('opacity-100');
+            
+            modalContent.classList.remove('opacity-0', 'scale-95');
+            modalContent.classList.add('opacity-100', 'scale-100');
+        }
+
+        function closeModal() {
+            modalBackdrop.classList.remove('opacity-100');
+            modalBackdrop.classList.add('opacity-0');
+            
+            modalContent.classList.remove('opacity-100', 'scale-100');
+            modalContent.classList.add('opacity-0', 'scale-95');
+            
+            setTimeout(() => {
+                modal.classList.remove('flex');
+                modal.classList.add('hidden');
+            }, 300); // match transition duration
+        }
+
+        openBtn.addEventListener('click', openModal);
+        closeBtn.addEventListener('click', closeModal);
+        cancelBtn.addEventListener('click', closeModal);
+        modalBackdrop.addEventListener('click', closeModal);
+    });
+</script>
+</body></html>
