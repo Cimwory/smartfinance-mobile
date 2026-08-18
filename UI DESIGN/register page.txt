@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Nexio - Register</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&amp;family=Hanken+Grotesk:wght@400&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error-container": "#ffdad6",
+                        "on-primary": "#00363d",
+                        "on-secondary-container": "#b5b8c9",
+                        "secondary-container": "#454957",
+                        "tertiary-fixed-dim": "#c1c6da",
+                        "tertiary-fixed": "#dee2f7",
+                        "inverse-on-surface": "#2f3131",
+                        "on-primary-container": "#00626e",
+                        "surface-container-low": "#1a1c1c",
+                        "on-tertiary": "#2b3040",
+                        "secondary-fixed-dim": "#c3c6d7",
+                        "surface-container-highest": "#343535",
+                        "surface-container-high": "#292a2a",
+                        "surface-dim": "#121414",
+                        "outline": "#849396",
+                        "surface-bright": "#38393a",
+                        "background": "#121414",
+                        "on-error": "#690005",
+                        "on-secondary-fixed": "#171b28",
+                        "primary-container": "#00e5ff",
+                        "surface-variant": "#343535",
+                        "on-secondary-fixed-variant": "#434654",
+                        "inverse-surface": "#e3e2e2",
+                        "on-primary-fixed": "#001f24",
+                        "error-container": "#93000a",
+                        "on-secondary": "#2c303d",
+                        "outline-variant": "#3b494c",
+                        "surface-tint": "#00daf3",
+                        "tertiary-container": "#ccd0e4",
+                        "surface-container": "#1e2020",
+                        "on-surface-variant": "#bac9cc",
+                        "primary-fixed-dim": "#00daf3",
+                        "surface-container-lowest": "#0d0e0f",
+                        "secondary-fixed": "#dfe2f3",
+                        "on-primary-fixed-variant": "#004f58",
+                        "error": "#ffb4ab",
+                        "tertiary": "#e9ecff",
+                        "secondary": "#c3c6d7",
+                        "surface": "#121414",
+                        "on-tertiary-container": "#54596a",
+                        "primary-fixed": "#9cf0ff",
+                        "inverse-primary": "#006875",
+                        "on-surface": "#e3e2e2",
+                        "on-tertiary-fixed": "#161b2a",
+                        "primary": "#c3f5ff",
+                        "on-tertiary-fixed-variant": "#414657",
+                        "on-background": "#e3e2e2"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-padding": "24px",
+                        "xs": "4px",
+                        "gutter": "16px",
+                        "base": "8px",
+                        "sm": "12px",
+                        "xl": "48px",
+                        "lg": "32px",
+                        "md": "20px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Sora"],
+                        "button-text": ["Sora"],
+                        "headline-lg-mobile": ["Sora"],
+                        "body-md": ["Hanken Grotesk"],
+                        "headline-lg": ["Sora"],
+                        "label-mono": ["JetBrains Mono"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "button-text": ["16px", { "lineHeight": "20px", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "label-mono": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #121414; /* background */
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(0, 229, 255, 0.05), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(195, 245, 255, 0.03), transparent 25%);
+        }
+        
+        /* Glassmorphism utilities */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .input-active-glow {
+            position: relative;
+        }
+        
+        .input-active-glow::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #00e5ff;
+            transition: width 0.3s ease;
+        }
+        
+        .input-active-glow:focus-within::after {
+            width: 100%;
+        }
+        
+        .btn-primary-glow {
+            background: linear-gradient(90deg, #00E5FF, #00A3B5);
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0);
+            transition: box-shadow 0.3s ease, transform 0.2s ease;
+        }
+        
+        .btn-primary-glow:hover {
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        .btn-primary-glow:active {
+            transform: translateY(0);
+        }
+        
+        /* Password Strength Liquid Fill */
+        .liquid-container {
+            height: 6px;
+            width: 100%;
+            background-color: #343535; /* surface-variant */
+            border-radius: 9999px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .liquid-fill {
+            height: 100%;
+            width: 90%; /* nearly full for static strong state */
+            border-radius: 9999px;
+            background: linear-gradient(90deg, #ffb4ab, #FBBC05, #00e5ff, #00A3B5, #00e5ff);
+            background-size: 200% 100%;
+            animation: liquid-flow 2s linear infinite;
+            transition: width 0.3s ease;
+        }
+
+        @keyframes liquid-flow {
+            0% { background-position: 200% 0; }
+            100% { background-position: 0 0; }
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-container-padding text-on-surface font-body-md overflow-x-hidden">
+<!-- Top AppBar (Suppressed Nav Shell as per instructions for linear flow, but keeping brand anchor if needed, here just raw logo placement per user request) -->
+<div class="fixed top-0 w-full flex justify-center items-center px-container-padding py-base z-50">
+<span class="font-headline-lg-mobile text-headline-lg-mobile font-bold tracking-tighter text-primary-fixed">NEXIO</span>
+</div>
+<!-- Main Registration Container -->
+<main class="w-full max-w-md mt-xl z-10">
+<div class="glass-panel rounded-lg p-lg flex flex-col gap-lg relative overflow-hidden shadow-2xl">
+<!-- Decorative circuit mask -->
+<div class="absolute inset-0 opacity-5 pointer-events-none" style="background-image: repeating-linear-gradient(45deg, #00e5ff 0, #00e5ff 1px, transparent 1px, transparent 10px);"></div>
+<header class="text-center relative z-10">
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-base">Create Account</h1>
+<p class="text-on-surface-variant text-sm">Join the future of wealth management.</p>
+</header>
+<form class="flex flex-col gap-gutter relative z-10" id="registerForm">
+<!-- Full Name -->
+<div class="flex flex-col gap-xs">
+<label class="font-label-mono text-label-mono text-on-surface-variant uppercase" for="fullName">Full Name</label>
+<div class="relative input-active-glow bg-surface-container rounded-DEFAULT overflow-hidden">
+<span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-outline">person</span>
+<input class="w-full bg-transparent border-none text-on-surface py-sm pl-[44px] pr-sm focus:ring-0 focus:outline-none placeholder-outline" id="fullName" placeholder="Enter your full name" required="" type="text"/>
+</div>
+</div>
+<!-- Email -->
+<div class="flex flex-col gap-xs">
+<label class="font-label-mono text-label-mono text-on-surface-variant uppercase" for="email">Email Address</label>
+<div class="relative input-active-glow bg-surface-container rounded-DEFAULT overflow-hidden">
+<span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-outline">mail</span>
+<input class="w-full bg-transparent border-none text-on-surface py-sm pl-[44px] pr-sm focus:ring-0 focus:outline-none placeholder-outline" id="email" placeholder="Enter your email" required="" type="email"/>
+</div>
+</div>
+<!-- Password -->
+<div class="flex flex-col gap-xs">
+<label class="font-label-mono text-label-mono text-on-surface-variant uppercase" for="password">Password</label>
+<div class="relative input-active-glow bg-surface-container rounded-DEFAULT overflow-hidden flex items-center pr-sm">
+<span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-outline">lock</span>
+<input class="w-full bg-transparent border-none text-on-surface py-sm pl-[44px] focus:ring-0 focus:outline-none placeholder-outline" id="password" placeholder="Create a strong password" required="" type="password"/>
+<button class="text-outline hover:text-primary-fixed transition-colors" id="togglePassword" type="button">
+<span class="material-symbols-outlined text-[20px]" id="visibilityIcon">visibility_off</span>
+</button>
+</div>
+<!-- Password Strength -->
+<div class="flex justify-between items-center mt-2" id="strengthContainer">
+<div class="liquid-container">
+<div class="liquid-fill" id="liquidBar"></div>
+</div>
+<span class="font-label-mono text-[10px] text-[#00e5ff] ml-2 w-16 text-right uppercase" id="strengthText" style="color: #00e5ff;">Secure</span>
+</div>
+</div>
+<!-- Primary CTA -->
+<button class="btn-primary-glow font-button-text text-button-text text-on-primary rounded-full py-md w-full mt-sm flex items-center justify-center gap-2" type="submit">
+                    Create Account
+                    <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</form>
+<div class="relative flex items-center justify-center py-base z-10">
+<div aria-hidden="true" class="absolute inset-0 flex items-center">
+<div class="w-full border-t border-outline-variant/30"></div>
+</div>
+<div class="relative bg-background px-4">
+<span class="font-label-mono text-label-mono text-on-surface-variant uppercase">Or continue with</span>
+</div>
+</div>
+<!-- Social Signup -->
+<button class="glass-panel font-button-text text-button-text text-on-surface rounded-full py-sm w-full flex items-center justify-center gap-sm hover:bg-surface-container-high transition-colors z-10" type="button">
+<svg class="w-5 h-5" fill="none" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M22.56 12.25C22.56 11.47 22.49 10.72 22.36 10H12V14.26H17.92C17.67 15.63 16.89 16.81 15.74 17.58V20.35H19.31C21.4 18.42 22.56 15.6 22.56 12.25Z" fill="#4285F4"></path>
+<path d="M12 23C14.97 23 17.46 22.02 19.31 20.35L15.74 17.58C14.74 18.25 13.48 18.66 12 18.66C9.13 18.66 6.7 16.73 5.82 14.12H2.14V16.98C3.95 20.58 7.67 23 12 23Z" fill="#34A853"></path>
+<path d="M5.82 14.12C5.59 13.44 5.46 12.73 5.46 12C5.46 11.27 5.59 10.56 5.82 9.88V7.02H2.14C1.39 8.52 1 10.21 1 12C1 13.79 1.39 15.48 2.14 16.98L5.82 14.12Z" fill="#FBBC05"></path>
+<path d="M12 5.34C13.62 5.34 15.06 5.9 16.2 7H19.39V3.82C17.46 2.02 14.97 1 12 1C7.67 1 3.95 3.42 2.14 7.02L5.82 9.88C6.7 7.27 9.13 5.34 12 5.34Z" fill="#EA4335"></path>
+</svg>
+                Sign up with Google
+            </button>
+<div class="text-center mt-sm z-10">
+<a class="text-on-surface-variant hover:text-primary-fixed transition-colors font-button-text text-[14px]" href="#">
+                    Already have an account? <span class="text-primary-fixed">Sign In</span>
+</a>
+</div>
+</div>
+</main>
+<script>
+        // Password Visibility Toggle
+        const toggleBtn = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+        const visibilityIcon = document.getElementById('visibilityIcon');
+
+        toggleBtn.addEventListener('click', () => {
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                visibilityIcon.textContent = 'visibility';
+            } else {
+                passwordInput.type = 'password';
+                visibilityIcon.textContent = 'visibility_off';
+            }
+        });
+
+        // Password Strength Logic
+        const liquidBar = document.getElementById('liquidBar');
+        const strengthText = document.getElementById('strengthText');
+
+        passwordInput.addEventListener('input', (e) => {
+            const val = e.target.value;
+            let strength = 0;
+            
+            if (val.length > 0) strength = 1; // Weak
+            if (val.length >= 8 && /[A-Z]/.test(val) && /[0-9]/.test(val)) strength = 2; // Medium
+            if (val.length >= 10 && /[^A-Za-z0-9]/.test(val) && strength === 2) strength = 3; // Strong
+
+            if (strength === 0) {
+                liquidBar.style.width = '0%';
+                strengthText.textContent = '';
+            } else if (strength === 1) {
+                liquidBar.style.width = '30%';
+                strengthText.textContent = 'Weak';
+                strengthText.style.color = '#ffb4ab';
+            } else if (strength === 2) {
+                liquidBar.style.width = '60%';
+                strengthText.textContent = 'Medium';
+                strengthText.style.color = '#FBBC05';
+            } else if (strength === 3) {
+                liquidBar.style.width = '90%';
+                strengthText.textContent = 'Secure';
+                strengthText.style.color = '#00e5ff';
+            }
+        });
+
+        // Form submission prevent default for demo
+        document.getElementById('registerForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            // Handle registration logic
+            const btn = e.target.querySelector('button[type="submit"]');
+            btn.innerHTML = '<span class="material-symbols-outlined animate-spin">sync</span> Processing...';
+            setTimeout(() => {
+                btn.innerHTML = 'Account Created <span class="material-symbols-outlined">check_circle</span>';
+            }, 1500);
+        });
+    </script>
+</body></html>

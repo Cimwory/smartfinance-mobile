@@ -1,8 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
-import '../../../core/theme/app_theme.dart';
+import 'dart:ui';
 import '../../auth/providers/auth_provider.dart';
 
 class EditProfileDialog extends ConsumerStatefulWidget {
@@ -31,43 +32,8 @@ class _EditProfileDialogState extends ConsumerState<EditProfileDialog> {
     super.dispose();
   }
 
-  Future<void> _showImageSourceActionSheet() async {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: AppTheme.cardColor,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (BuildContext context) {
-        return SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              ListTile(
-                leading: const Icon(Icons.camera_alt, color: Colors.white),
-                title: const Text('Kamera', style: TextStyle(color: Colors.white)),
-                onTap: () {
-                  Navigator.pop(context);
-                  _pickImage(ImageSource.camera);
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.photo_library, color: Colors.white),
-                title: const Text('Galeri', style: TextStyle(color: Colors.white)),
-                onTap: () {
-                  Navigator.pop(context);
-                  _pickImage(ImageSource.gallery);
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Future<void> _pickImage(ImageSource source) async {
-    final XFile? image = await _picker.pickImage(source: source, imageQuality: 80);
+  Future<void> _pickImage() async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
       setState(() {
         _selectedImage = File(image.path);
@@ -84,7 +50,7 @@ class _EditProfileDialogState extends ConsumerState<EditProfileDialog> {
 
     if (mounted) {
       if (success) {
-        Navigator.of(context).pop(true); // Return true to indicate success
+        Navigator.of(context).pop(true);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Profil berhasil diperbarui'), backgroundColor: Colors.green),
         );
@@ -102,76 +68,189 @@ class _EditProfileDialogState extends ConsumerState<EditProfileDialog> {
     final authState = ref.watch(authProvider);
 
     return Dialog(
-      backgroundColor: AppTheme.cardColor,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              'Edit Profil',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
+      backgroundColor: Colors.transparent, // We use Container with BackdropFilter
+      elevation: 0,
+      insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+      child: TweenAnimationBuilder<double>(
+        tween: Tween<double>(begin: 0.95, end: 1.0),
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOutCubic,
+        builder: (context, scale, child) {
+          return Transform.scale(
+            scale: scale,
+            child: Opacity(
+              opacity: ((scale - 0.95) * 20).clamp(0.0, 1.0), // scale from 0.95 to 1.0 means opacity 0 to 1
+              child: child,
             ),
-            const SizedBox(height: 24),
-            GestureDetector(
-              onTap: _showImageSourceActionSheet,
-              child: Stack(
-                alignment: Alignment.bottomRight,
-                children: [
-                  CircleAvatar(
-                    radius: 40,
-                    backgroundColor: AppTheme.backgroundColor,
-                    backgroundImage: _selectedImage != null ? FileImage(_selectedImage!) : null,
-                    child: _selectedImage == null
-                        ? const Icon(Icons.person, size: 40, color: AppTheme.textSecondary)
-                        : null,
+          );
+        },
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(24),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: const Color(0xFF1e2020).withOpacity(0.8), // surface-container/80
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(color: const Color(0xFF00e5ff).withOpacity(0.2)), // primary-container/20
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.5),
+                    blurRadius: 30,
+                    spreadRadius: 5,
                   ),
-                  Container(
-                    padding: const EdgeInsets.all(4),
-                    decoration: const BoxDecoration(
-                      color: AppTheme.primaryColor,
-                      shape: BoxShape.circle,
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Header
+                  Center(
+                    child: Text(
+                      'Edit Profil',
+                      style: GoogleFonts.sora(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xFFe3e2e2), // on-surface
+                      ),
                     ),
-                    child: const Icon(Icons.camera_alt, size: 16, color: Colors.white),
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Avatar Picker
+                  Center(
+                    child: GestureDetector(
+                      onTap: _pickImage,
+                      child: Stack(
+                        alignment: Alignment.bottomRight,
+                        children: [
+                          Container(
+                            width: 80,
+                            height: 80,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: const Color(0xFF343535),
+                              border: Border.all(color: const Color(0xFF00e5ff).withOpacity(0.5), width: 2),
+                              image: _selectedImage != null
+                                  ? DecorationImage(image: FileImage(_selectedImage!), fit: BoxFit.cover)
+                                  : null,
+                            ),
+                            child: _selectedImage == null
+                                ? const Icon(Icons.person, size: 40, color: Color(0xFFbac9cc))
+                                : null,
+                          ),
+                          Container(
+                            width: 28,
+                            height: 28,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF00e5ff),
+                              shape: BoxShape.circle,
+                              border: Border.all(color: const Color(0xFF121414), width: 2),
+                            ),
+                            child: const Icon(Icons.camera_alt, size: 14, color: Color(0xFF00363d)),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Form Fields
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Username',
+                        style: GoogleFonts.sora(
+                          color: const Color(0xFFe3e2e2),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF1a1c1c).withOpacity(0.4), // bg-surface-container-low/40
+                          borderRadius: BorderRadius.circular(9999),
+                          border: Border.all(color: const Color(0xFFbac9cc).withOpacity(0.3)), // border-on-surface-variant/30
+                        ),
+                        child: TextField(
+                          controller: _usernameController,
+                          style: GoogleFonts.hankenGrotesk(color: const Color(0xFFe3e2e2), fontSize: 16),
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            hintText: 'Enter username',
+                            hintStyle: GoogleFonts.hankenGrotesk(color: const Color(0xFF849396)),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 32),
+
+                  // Action Buttons
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        style: TextButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(9999)),
+                        ),
+                        child: Text(
+                          'Batal',
+                          style: GoogleFonts.sora(
+                            color: const Color(0xFFbac9cc),
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(9999),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFF00e5ff).withOpacity(0.3),
+                              blurRadius: 20,
+                            ),
+                          ],
+                        ),
+                        child: ElevatedButton(
+                          onPressed: authState.isLoading ? null : _saveProfile,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF00e5ff),
+                            foregroundColor: const Color(0xFF00363d),
+                            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(9999)),
+                            elevation: 0,
+                          ),
+                          child: authState.isLoading
+                              ? const SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(color: Color(0xFF00363d), strokeWidth: 2),
+                                )
+                              : Text(
+                                  'Simpan',
+                                  style: GoogleFonts.sora(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 24),
-            TextField(
-              controller: _usernameController,
-              style: const TextStyle(color: Colors.white),
-              decoration: const InputDecoration(
-                labelText: 'Username',
-              ),
-            ),
-            const SizedBox(height: 32),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('Batal', style: TextStyle(color: AppTheme.textSecondary)),
-                ),
-                const SizedBox(width: 8),
-                ElevatedButton(
-                  onPressed: authState.isLoading ? null : _saveProfile,
-                  child: authState.isLoading
-                      ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
-                        )
-                      : const Text('Simpan'),
-                ),
-              ],
-            )
-          ],
+          ),
         ),
       ),
     );

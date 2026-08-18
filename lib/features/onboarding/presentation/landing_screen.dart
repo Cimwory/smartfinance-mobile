@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
-import '../../../core/theme/app_theme.dart';
+import 'package:google_fonts/google_fonts.dart';
+import '../../../core/widgets/animated_circuit_logo.dart';
 import '../../auth/presentation/login_screen.dart';
 import '../../auth/presentation/register_screen.dart';
 
@@ -11,11 +12,10 @@ class LandingScreen extends StatefulWidget {
   State<LandingScreen> createState() => _LandingScreenState();
 }
 
-class _LandingScreenState extends State<LandingScreen> with SingleTickerProviderStateMixin {
+class _LandingScreenState extends State<LandingScreen> with TickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
-  late Animation<double> _scaleAnimation;
 
   @override
   void initState() {
@@ -33,10 +33,6 @@ class _LandingScreenState extends State<LandingScreen> with SingleTickerProvider
       CurvedAnimation(parent: _controller, curve: const Interval(0.2, 0.8, curve: Curves.easeOutQuart)),
     );
 
-    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: const Interval(0.0, 0.7, curve: Curves.easeOutBack)),
-    );
-
     _controller.forward();
   }
 
@@ -49,231 +45,204 @@ class _LandingScreenState extends State<LandingScreen> with SingleTickerProvider
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFF121414), // bg-background
       body: Stack(
         children: [
-          // 1. Premium Background with Radial Gradient to hide the logo smudge
-          // The center is pure black (matching the logo background), fading into deep blue
-          Container(
-            decoration: const BoxDecoration(
-              gradient: RadialGradient(
-                center: Alignment(0, -0.3),
-                radius: 1.2,
-                colors: [
-                  Colors.black, // Matches logo background exactly
-                  AppTheme.backgroundColor,
-                  Color(0xFF02060D),
-                ],
-                stops: [0.0, 0.5, 1.0],
-              ),
-            ),
-          ),
-
-          // 2. Glowing Accents (Glassmorphism blobs)
+          // 1. Efek Mesh Gradient (Blobs) dari HTML (lebih subtle)
           Positioned(
-            top: -100,
-            left: -100,
-            child: Container(
-              width: 300,
-              height: 300,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppTheme.primaryColor.withOpacity(0.15),
-              ),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 80, sigmaY: 80),
-                child: Container(color: Colors.transparent),
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: -50,
-            right: -50,
+            top: MediaQuery.of(context).size.height * 0.15,
+            left: -50,
             child: Container(
               width: 250,
               height: 250,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 shape: BoxShape.circle,
-                color: AppTheme.secondaryColor.withOpacity(0.1),
+                color: Color(0xFF00daf3), // primary-fixed-dim
               ),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 80, sigmaY: 80),
-                child: Container(color: Colors.transparent),
+            ),
+          ),
+          Positioned(
+            bottom: MediaQuery.of(context).size.height * 0.15,
+            right: -50,
+            child: Container(
+              width: 300,
+              height: 300,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: Color(0xFF00e5ff), // primary-container
+              ),
+            ),
+          ),
+          // Blur layer
+          Positioned.fill(
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 100, sigmaY: 100),
+              child: Container(
+                color: const Color(0xFF121414).withOpacity(0.9), // Lebih gelap agar neon pop up
               ),
             ),
           ),
 
-          // 3. Main Content
+          // 2. Konten Utama
           SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 28.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const Spacer(flex: 3),
-                  
-                  // Hero Logo with Scale & Fade
-                  FadeTransition(
-                    opacity: _fadeAnimation,
-                    child: ScaleTransition(
-                      scale: _scaleAnimation,
-                      child: Center(
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(100),
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
-                            child: Container(
-                              padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.white.withOpacity(0.15), // Semi-transparent white for frosted glass
-                                border: Border.all(color: Colors.white.withOpacity(0.3), width: 1.5),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: AppTheme.primaryColor.withOpacity(0.3),
-                                    blurRadius: 50,
-                                    spreadRadius: 10,
-                                  ),
-                                ],
-                              ),
-                              child: ClipOval(
-                                child: Image.asset(
-                                  'assets/images/nexio_logo_trans.png',
-                                  height: 120,
-                                  width: 120,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
+            child: Center(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Logo N Animasi SVG ke CustomPainter
+                    FadeTransition(
+                      opacity: _fadeAnimation,
+                      child: SlideTransition(
+                        position: _slideAnimation,
+                        child: const SizedBox(
+                          width: 128,
+                          height: 128,
+                          child: Center(
+                            child: AnimatedCircuitLogo(),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+                    
+                    // Judul (Headline) menggunakan font Sora
+                    FadeTransition(
+                      opacity: _fadeAnimation,
+                      child: SlideTransition(
+                        position: _slideAnimation,
+                        child: Text(
+                          'Nexio Mobile',
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.sora(
+                            fontSize: 42,
+                            fontWeight: FontWeight.w700,
+                            color: const Color(0xFF9cf0ff), // primary-fixed
+                            letterSpacing: -0.84,
+                            height: 1.1,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    
+                    // Subjudul menggunakan font Hanken Grotesk
+                    FadeTransition(
+                      opacity: _fadeAnimation,
+                      child: SlideTransition(
+                        position: _slideAnimation,
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 280),
+                          child: Text(
+                            'Solusi cerdas untuk mengelola dan merencanakan masa depan keuangan Anda.',
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.hankenGrotesk(
+                              fontSize: 16,
+                              color: const Color(0xFFbac9cc), // on-surface-variant
+                              height: 1.5,
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 40),
-                  
-                  // Headline
-                  FadeTransition(
-                    opacity: _fadeAnimation,
-                    child: SlideTransition(
-                      position: _slideAnimation,
-                      child: Text(
-                        'Nexio Mobile',
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                              fontSize: 42,
-                              fontWeight: FontWeight.w800,
-                              color: Colors.white,
-                              letterSpacing: 1.2,
-                            ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  
-                  // Subtitle
-                  FadeTransition(
-                    opacity: _fadeAnimation,
-                    child: SlideTransition(
-                      position: _slideAnimation,
-                      child: Text(
-                        'Solusi cerdas untuk mengelola dan\nmerencanakan masa depan keuangan Anda.',
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              fontSize: 16,
-                              color: Colors.white70,
-                              height: 1.6,
-                              letterSpacing: 0.5,
-                            ),
-                      ),
-                    ),
-                  ),
-                  const Spacer(flex: 3),
-                  
-                  // Action Buttons with Premium Styling
-                  FadeTransition(
-                    opacity: _fadeAnimation,
-                    child: SlideTransition(
-                      position: _slideAnimation,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          // Primary Button
-                          Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(16),
-                              gradient: const LinearGradient(
-                                colors: [AppTheme.primaryColor, Color(0xFF3B6AD6)],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: AppTheme.primaryColor.withOpacity(0.4),
-                                  blurRadius: 20,
-                                  offset: const Offset(0, 8),
+                    const SizedBox(height: 48),
+                    
+                    // Tombol Aksi
+                    FadeTransition(
+                      opacity: _fadeAnimation,
+                      child: SlideTransition(
+                        position: _slideAnimation,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            // Tombol Masuk (Gradasi Cyan + Glow)
+                            Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(9999),
+                                gradient: const LinearGradient(
+                                  colors: [Color(0xFF00e5ff), Color(0xFF00daf3)],
+                                  begin: Alignment.centerLeft,
+                                  end: Alignment.centerRight,
                                 ),
-                              ],
-                            ),
-                            child: ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => const LoginScreen()),
-                                );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(vertical: 20),
-                                backgroundColor: Colors.transparent,
-                                shadowColor: Colors.transparent,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: const Color(0xFF00e5ff).withOpacity(0.4),
+                                    blurRadius: 20,
+                                    spreadRadius: 0,
+                                    offset: const Offset(0, 0),
+                                  ),
+                                ],
                               ),
-                              child: const Text(
-                                'Masuk ke Akun',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                  letterSpacing: 0.5,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => const LoginScreen()),
+                                  );
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(vertical: 18),
+                                  backgroundColor: Colors.transparent,
+                                  shadowColor: Colors.transparent,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(9999),
+                                  ),
+                                ),
+                                child: Text(
+                                  'Masuk ke Akun',
+                                  style: GoogleFonts.sora(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: const Color(0xFF00363d), // on-primary
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          const SizedBox(height: 20),
-                          
-                          // Secondary Button
-                          OutlinedButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => const RegisterScreen()),
-                              );
-                            },
-                            style: OutlinedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 20),
-                              side: BorderSide(color: Colors.white.withOpacity(0.3), width: 1.5),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16),
+                            const SizedBox(height: 16),
+                            
+                            // Tombol Daftar (Glassmorphism Dark)
+                            Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(9999),
+                                color: Colors.white.withOpacity(0.05),
+                                border: Border.all(color: Colors.white.withOpacity(0.10)), // Lebih subtle
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(9999),
+                                child: BackdropFilter(
+                                  filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                                  child: TextButton(
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (context) => const RegisterScreen()),
+                                      );
+                                    },
+                                    style: TextButton.styleFrom(
+                                      padding: const EdgeInsets.symmetric(vertical: 18),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(9999),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      'Daftar Akun Baru',
+                                      style: GoogleFonts.sora(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                        color: const Color(0xFFe3e2e2), // on-surface
+                                      ),
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
-                            child: const Text(
-                              'Daftar Akun Baru',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                                letterSpacing: 0.5,
-                              ),
-                            ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 48),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
