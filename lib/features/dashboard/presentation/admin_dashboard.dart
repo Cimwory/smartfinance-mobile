@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../auth/presentation/login_screen.dart';
 import '../../admin/presentation/user_management_screen.dart';
@@ -12,12 +13,13 @@ class AdminDashboard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       extendBodyBehindAppBar: true,
+      backgroundColor: const Color(0xFF121414), // Cyber background
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.transparent,
         actions: [
           IconButton(
-            icon: const Icon(Icons.logout, color: Colors.white),
+            icon: const Icon(Icons.logout, color: Color(0xFFbac9cc)),
             tooltip: 'Logout',
             onPressed: () async {
               await ref.read(authProvider.notifier).logout();
@@ -32,28 +34,32 @@ class AdminDashboard extends ConsumerWidget {
       ),
       body: Stack(
         children: [
-          // Background Image
-          Positioned.fill(
-            child: Image.asset(
-              'assets/images/backgroundfinance.jpg',
-              fit: BoxFit.cover,
-            ),
-          ),
-          // Gradient Overlay
-          Positioned.fill(
+          // Cyber Ambient Background
+          Positioned(
+            top: -100,
+            left: -100,
             child: Container(
+              width: 400,
+              height: 400,
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    const Color(0xFF070B14).withOpacity(0.8),
-                    const Color(0xFF070B14).withOpacity(0.98),
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
+                shape: BoxShape.circle,
+                color: const Color(0xFF00e5ff).withOpacity(0.08),
               ),
             ),
           ),
+          Positioned(
+            bottom: -100,
+            right: -100,
+            child: Container(
+              width: 500,
+              height: 500,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: const Color(0xFF9cf0ff).withOpacity(0.05),
+              ),
+            ),
+          ),
+          
           // Content
           Center(
             child: SingleChildScrollView(
@@ -61,75 +67,121 @@ class AdminDashboard extends ConsumerWidget {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(24),
                 child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                  filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
                   child: Container(
                     padding: const EdgeInsets.all(32),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF070A13).withOpacity(0.85),
+                      color: Colors.white.withOpacity(0.03), // glass-panel
                       borderRadius: BorderRadius.circular(24),
-                      border: Border.all(color: Colors.white.withOpacity(0.1)),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.6),
-                          blurRadius: 90,
-                          offset: const Offset(0, 30),
-                        ),
-                      ],
+                      border: Border.all(color: Colors.white.withOpacity(0.05)),
                     ),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        const Text(
-                          'ADMIN ACCESS',
-                          style: TextStyle(
-                            color: Color(0xFF818CF8),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: 1.5,
+                        // Decorative Icon
+                        Container(
+                          width: 80,
+                          height: 80,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF00e5ff).withOpacity(0.1),
+                            shape: BoxShape.circle,
+                            border: Border.all(color: const Color(0xFF00e5ff).withOpacity(0.2)),
                           ),
+                          child: const Icon(Icons.admin_panel_settings, color: Color(0xFF00e5ff), size: 40),
                         ),
-                        const SizedBox(height: 12),
-                        Text(
-                          'Dashboard Admin',
-                          style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 36,
-                                height: 1.2,
-                              ),
+                        const SizedBox(height: 24),
+                        
+                        // Badge
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF00e5ff).withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(999),
+                            border: Border.all(color: const Color(0xFF00e5ff).withOpacity(0.3)),
+                          ),
+                          child: Text(
+                            'ADMIN ACCESS',
+                            style: GoogleFonts.getFont(
+                              'JetBrains Mono',
+                              color: const Color(0xFF00e5ff),
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 1.5,
+                            ),
+                          ),
                         ),
                         const SizedBox(height: 16),
+                        
+                        // Title
+                        Text(
+                          'Dashboard Admin',
+                          style: GoogleFonts.sora(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 32,
+                            height: 1.2,
+                            letterSpacing: -0.5,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 16),
+                        
+                        // Description
                         Text(
                           'Selamat datang. Akun ini memiliki role admin dan dapat diarahkan ke pengelolaan data, user, atau modul internal lain ke depannya.',
-                          style: TextStyle(
-                            color: Colors.white.withOpacity(0.72),
+                          style: GoogleFonts.hankenGrotesk(
+                            color: const Color(0xFFbac9cc),
                             fontSize: 16,
-                            height: 1.7,
+                            height: 1.5,
                           ),
+                          textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 32),
-                        Wrap(
-                          spacing: 12,
-                          runSpacing: 12,
-                          children: [
-                            ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (_) => const UserManagementScreen()),
-                                );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF6366F1), // Indigo color
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                                textStyle: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
-                              ),
-                              child: const Text('Kelola User'),
+                        
+                        // Action Button
+                        Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(9999),
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFF00E5FF), Color(0xFF00A3B5)],
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight,
                             ),
-                          ],
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0xFF00E5FF).withOpacity(0.4),
+                                blurRadius: 15,
+                                spreadRadius: 0,
+                              ),
+                            ],
+                          ),
+                          child: ElevatedButton.icon(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (_) => const UserManagementScreen()),
+                              );
+                            },
+                            icon: const Icon(Icons.manage_accounts, color: Colors.white, size: 20),
+                            label: Text(
+                              'Kelola Pengguna',
+                              style: GoogleFonts.sora(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              backgroundColor: Colors.transparent,
+                              shadowColor: Colors.transparent,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(9999),
+                              ),
+                            ),
+                          ),
                         ),
                       ],
                     ),

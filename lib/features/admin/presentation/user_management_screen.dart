@@ -1,5 +1,7 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../../core/theme/app_theme.dart';
 import '../providers/admin_users_provider.dart';
 import '../data/models/user_model.dart';
@@ -20,9 +22,12 @@ class _UserManagementScreenState extends ConsumerState<UserManagementScreen> {
     final usersAsync = ref.watch(adminUsersProvider);
 
     return Scaffold(
-      backgroundColor: AppTheme.backgroundColor,
+      backgroundColor: const Color(0xFF121414), // Cyber background
       appBar: AppBar(
-        title: const Text('Manajemen User'),
+        title: Text(
+          'Manajemen User',
+          style: GoogleFonts.sora(fontWeight: FontWeight.w600, fontSize: 18),
+        ),
         backgroundColor: Colors.transparent,
         elevation: 0,
         actions: [
@@ -36,8 +41,23 @@ class _UserManagementScreenState extends ConsumerState<UserManagementScreen> {
           ),
         ],
       ),
-      body: Column(
+      body: Stack(
         children: [
+          // Cyber Ambient Background
+          Positioned(
+            top: -100,
+            right: -50,
+            child: Container(
+              width: 300,
+              height: 300,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: const Color(0xFF00e5ff).withOpacity(0.05),
+              ),
+            ),
+          ),
+          Column(
+            children: [
           // Search Bar
           Padding(
             padding: const EdgeInsets.all(16.0),
@@ -47,25 +67,25 @@ class _UserManagementScreenState extends ConsumerState<UserManagementScreen> {
                   _searchQuery = value;
                 });
               },
-              style: const TextStyle(color: Colors.white),
+              style: GoogleFonts.hankenGrotesk(color: Colors.white),
               decoration: InputDecoration(
                 hintText: 'Cari nama atau email...',
-                hintStyle: TextStyle(color: AppTheme.textSecondary),
-                prefixIcon: const Icon(Icons.search, color: AppTheme.textSecondary),
+                hintStyle: GoogleFonts.hankenGrotesk(color: const Color(0xFFbac9cc)),
+                prefixIcon: const Icon(Icons.search, color: Color(0xFFbac9cc)),
                 filled: true,
-                fillColor: AppTheme.cardColor,
+                fillColor: const Color(0xFF1a1c1c).withOpacity(0.5), // glass-panel
                 contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide.none,
+                  borderRadius: BorderRadius.circular(999),
+                  borderSide: BorderSide(color: Colors.white.withOpacity(0.05)),
                 ),
                 enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: Color(0xFF1e293b)),
+                  borderRadius: BorderRadius.circular(999),
+                  borderSide: BorderSide(color: Colors.white.withOpacity(0.05)),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: AppTheme.primaryColor, width: 1.5),
+                  borderRadius: BorderRadius.circular(999),
+                  borderSide: const BorderSide(color: Color(0xFF00e5ff), width: 1.5),
                 ),
               ),
             ),
@@ -112,6 +132,8 @@ class _UserManagementScreenState extends ConsumerState<UserManagementScreen> {
           ),
         ],
       ),
+        ],
+      ),
     );
   }
 
@@ -120,46 +142,50 @@ class _UserManagementScreenState extends ConsumerState<UserManagementScreen> {
 
     Color roleColor;
     if (user.role == 'admin') {
-      roleColor = Colors.redAccent;
+      roleColor = const Color(0xFF9cf0ff); // primary-fixed
     } else {
-      roleColor = AppTheme.secondaryColor;
+      roleColor = const Color(0xFFbac9cc); // on-surface-variant
     }
 
     return Container(
       decoration: BoxDecoration(
-        color: AppTheme.cardColor,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFF1e293b)),
+        color: Colors.white.withOpacity(0.03), // glass-panel
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: Colors.white.withOpacity(0.05)),
       ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(16),
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => UserDetailScreen(user: user),
-              ),
-            );
-          },
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(24),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => UserDetailScreen(user: user),
+                  ),
+                );
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
             child: Row(
               children: [
                 // Avatar
                 CircleAvatar(
                   radius: 28,
-                  backgroundColor: AppTheme.primaryColor.withOpacity(0.2),
+                  backgroundColor: const Color(0xFF00e5ff).withOpacity(0.1),
                   backgroundImage: user.avatar != null && user.avatar!.isNotEmpty
                       ? NetworkImage(user.avatar!)
                       : null,
                   child: user.avatar == null || user.avatar!.isEmpty
                       ? Text(
                           initial,
-                          style: const TextStyle(
+                          style: GoogleFonts.sora(
                             fontSize: 22,
                             fontWeight: FontWeight.bold,
-                            color: AppTheme.primaryColor,
+                            color: const Color(0xFF00e5ff),
                           ),
                         )
                       : null,
@@ -176,10 +202,10 @@ class _UserManagementScreenState extends ConsumerState<UserManagementScreen> {
                           Expanded(
                             child: Text(
                               user.name,
-                              style: const TextStyle(
+                              style: GoogleFonts.sora(
                                 color: Colors.white,
                                 fontSize: 16,
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.w600,
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -191,16 +217,16 @@ class _UserManagementScreenState extends ConsumerState<UserManagementScreen> {
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                             decoration: BoxDecoration(
                               color: user.status == 'Active' 
-                                  ? Colors.green.withOpacity(0.2) 
+                                  ? const Color(0xFF388E3C).withOpacity(0.2) 
                                   : Colors.grey.withOpacity(0.2),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Text(
                               user.status,
-                              style: TextStyle(
+                              style: GoogleFonts.hankenGrotesk(
                                 fontSize: 10,
-                                fontWeight: FontWeight.w600,
-                                color: user.status == 'Active' ? Colors.green : Colors.grey,
+                                fontWeight: FontWeight.bold,
+                                color: user.status == 'Active' ? const Color(0xFF81C784) : Colors.grey,
                               ),
                             ),
                           ),
@@ -209,28 +235,30 @@ class _UserManagementScreenState extends ConsumerState<UserManagementScreen> {
                       const SizedBox(height: 4),
                       Text(
                         user.email,
-                        style: const TextStyle(
-                          color: AppTheme.textSecondary,
+                        style: GoogleFonts.hankenGrotesk(
+                          color: const Color(0xFFbac9cc),
                           fontSize: 13,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 12),
                       // Role Badge
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                         decoration: BoxDecoration(
-                          color: roleColor.withOpacity(0.15),
-                          borderRadius: BorderRadius.circular(6),
-                          border: Border.all(color: roleColor.withOpacity(0.3)),
+                          color: roleColor.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(999),
+                          border: Border.all(color: roleColor.withOpacity(0.2)),
                         ),
                         child: Text(
                           user.role.toUpperCase(),
-                          style: TextStyle(
+                          style: GoogleFonts.getFont(
+                            'JetBrains Mono',
                             fontSize: 10,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w600,
                             color: roleColor,
+                            letterSpacing: 1.0,
                           ),
                         ),
                       ),
@@ -242,7 +270,7 @@ class _UserManagementScreenState extends ConsumerState<UserManagementScreen> {
                 IconButton(
                   icon: const Icon(
                     Icons.more_vert,
-                    color: AppTheme.textSecondary,
+                    color: Color(0xFFbac9cc),
                   ),
                   onPressed: () {
                     _showUserActionBottomModal(user);
@@ -253,92 +281,108 @@ class _UserManagementScreenState extends ConsumerState<UserManagementScreen> {
           ),
         ),
       ),
+        ),
+      ),
     );
   }
 
   void _showUserActionBottomModal(UserModel user) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: AppTheme.cardColor,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
+      backgroundColor: Colors.transparent,
       builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Aksi untuk ${user.name}',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+        return Container(
+          decoration: BoxDecoration(
+            color: const Color(0xFF1a1c1c), // glass-panel low
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+            border: Border.all(color: Colors.white.withOpacity(0.05)),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 16.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 40,
+                  height: 4,
+                  margin: const EdgeInsets.only(bottom: 24),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 24),
-              _buildModalAction(
-                icon: Icons.person_outline,
-                title: 'Lihat Detail User',
-                color: Colors.white,
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => UserDetailScreen(user: user),
-                    ),
-                  );
-                },
-              ),
-              const Divider(color: Color(0xFF1e293b), height: 1),
-              _buildModalAction(
-                icon: Icons.edit_outlined,
-                title: 'Edit User',
-                color: Colors.white,
-                onTap: () {
-                  Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Fitur Edit User belum tersedia')),
-                  );
-                },
-              ),
-              const Divider(color: Color(0xFF1e293b), height: 1),
-              _buildModalAction(
-                icon: Icons.security_outlined,
-                title: 'Ubah Role',
-                color: Colors.white,
-                onTap: () {
-                  Navigator.pop(context);
-                  _showChangeRoleDialog(user);
-                },
-              ),
-              const Divider(color: Color(0xFF1e293b), height: 1),
-              _buildModalAction(
-                icon: user.status == 'Active' ? Icons.block_outlined : Icons.check_circle_outline,
-                title: user.status == 'Active' ? 'Nonaktifkan User' : 'Aktifkan User',
-                color: Colors.orangeAccent,
-                onTap: () async {
-                  Navigator.pop(context);
-                  final success = await ref.read(adminUsersProvider.notifier).toggleStatus(user.id);
-                  if (mounted && success) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Status user ${user.name} berhasil diubah')),
+                Text(
+                  'Aksi untuk ${user.name}',
+                  style: GoogleFonts.sora(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                _buildModalAction(
+                  icon: Icons.person_outline,
+                  title: 'Lihat Detail User',
+                  color: Colors.white,
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => UserDetailScreen(user: user),
+                      ),
                     );
-                  }
-                },
-              ),
-              const Divider(color: Color(0xFF1e293b), height: 1),
-              _buildModalAction(
-                icon: Icons.delete_outline,
-                title: 'Hapus User',
-                color: Colors.redAccent,
-                onTap: () {
-                  Navigator.pop(context);
-                  _showDeleteConfirmationDialog(user);
-                },
-              ),
-            ],
+                  },
+                ),
+                const Divider(color: Color(0xFF2a2c2c), height: 1),
+                _buildModalAction(
+                  icon: Icons.edit_outlined,
+                  title: 'Edit User',
+                  color: Colors.white,
+                  onTap: () {
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Fitur Edit User belum tersedia')),
+                    );
+                  },
+                ),
+                const Divider(color: Color(0xFF2a2c2c), height: 1),
+                _buildModalAction(
+                  icon: Icons.security_outlined,
+                  title: 'Ubah Role',
+                  color: Colors.white,
+                  onTap: () {
+                    Navigator.pop(context);
+                    _showChangeRoleDialog(user);
+                  },
+                ),
+                const Divider(color: Color(0xFF2a2c2c), height: 1),
+                _buildModalAction(
+                  icon: user.status == 'Active' ? Icons.block_outlined : Icons.check_circle_outline,
+                  title: user.status == 'Active' ? 'Nonaktifkan User' : 'Aktifkan User',
+                  color: Colors.orangeAccent,
+                  onTap: () async {
+                    Navigator.pop(context);
+                    final success = await ref.read(adminUsersProvider.notifier).toggleStatus(user.id);
+                    if (mounted && success) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Status user ${user.name} berhasil diubah')),
+                      );
+                    }
+                  },
+                ),
+                const Divider(color: Color(0xFF2a2c2c), height: 1),
+                _buildModalAction(
+                  icon: Icons.delete_outline,
+                  title: 'Hapus User',
+                  color: Colors.redAccent,
+                  onTap: () {
+                    Navigator.pop(context);
+                    _showDeleteConfirmationDialog(user);
+                  },
+                ),
+                const SizedBox(height: 16),
+              ],
+            ),
           ),
         );
       },
